@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hibernate-configuration>
+   <session-factory>
+   
+      <property name = "hibernate.dialect">
+         org.hibernate.dialect.PostgreSQL10Dialect
+      </property>
+      <property name = "hibernate.connection.driver_class">
+         org.postgresql.Driver
+      </property>
+      <property name = "hibernate.connection.url">
+	  <!--copied from DBVisualizer -->
+      jdbc:postgresql://localhost:5432/JAVADUCKS_PIZZA
+<!--          jdbc:postgresql:JAVADUCKS_PIZZA -->
+      </property>
+      <property name = "hibernate.connection.username">
+         pgroot
+      </property>
+      <property name = "hibernate.connection.password">
+         This_1_is_PGROOTs_Password.
+      </property>
+      <property name="hibernate.connection.pool_size">
+      	5
+      </property>
+      <property name="hibernate.connection.autocommit">
+      	false
+      </property>      
+	  <property name="hibernate.show_sql">true</property>
+      
+      <!-- List of XML mapping classes -->
+      <mapping class="com.javaduckspizza.vo.CustomersVo"/>
+      <mapping class="com.javaduckspizza.vo.ModifiersVo"/>
+      <mapping class="com.javaduckspizza.vo.OrdersVo"/>
+      <mapping class="com.javaduckspizza.vo.PizzaToppingAssociationVo"/>
+      <mapping class="com.javaduckspizza.vo.PizzaVo"/>
+      <mapping class="com.javaduckspizza.vo.TypesModifiersAssociationVo"/>
+      <mapping class="com.javaduckspizza.vo.TypesVo"/>
+      
+   </session-factory>
+</hibernate-configuration>
