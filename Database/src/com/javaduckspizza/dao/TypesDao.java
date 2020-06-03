@@ -17,7 +17,7 @@ public class TypesDao implements ITypesDao {
 	private static final String HQL_UPDATE = "UPDATE TypesVo " +
 			"SET DESCRIPTION = :description, IS_ACTIVE = :isActive " +
 			"WHERE ID = :id";
-//	private static final String HQL_GET_BY_ID = "FROM TypesVo WHERE ID = :id";
+	private static final String HQL_GET_BY_ID = "FROM TypesVo WHERE ID = :id";
 	private static final String HQL_GET_BY_SEQUENCE_CODE = "FROM TypesVo WHERE SEQUENCE_CODE = :sequenceCode";
 	private static final String HQL_GET_BY_CATEGORY = "FROM TypesVo WHERE CATEGORY = :category";
 	private static final String HQL_DELETE = "DELETE FROM TypesVo WHERE ID = :id";
@@ -50,13 +50,10 @@ public class TypesDao implements ITypesDao {
 
 	@Override
 	public TypesVo get(long id, Session session) {
-		System.out.println("In get()...");
-		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-		CriteriaQuery<TypesVo> criteria = criteriaBuilder.createQuery(TypesVo.class);
-		Root<TypesVo> root = criteria.from(TypesVo.class);
-		criteria.select(root).where(criteriaBuilder.equal(root.get("id"), id));
-		Query<TypesVo> query = session.createQuery(criteria);
-		List<TypesVo> lstTypes = query.getResultList();
+		System.out.println("In getBySequenceCode(), using " + id);
+		Query<TypesVo> query = session.createQuery(HQL_GET_BY_ID);
+		query.setParameter("id", id);
+		List<TypesVo> lstTypes = query.list();
 
 		return (((lstTypes == null) || lstTypes.isEmpty()) ? null : lstTypes.get(0));
 	}
