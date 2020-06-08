@@ -12,11 +12,11 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.javaduckspizza.dao.interfaces.ITypesModifiersAssociationDao;
-import com.javaduckspizza.vo.TypesModifiersAssociationVo;
+import com.javaduckspizza.vo.TypesModifierAssociationVo;
 
 public class TypesModifiersAssociationDao implements ITypesModifiersAssociationDao {
 	@Override
-	public long insert(TypesModifiersAssociationVo vo, Session session) {
+	public long insert(TypesModifierAssociationVo vo, Session session) {
 		Transaction txn = session.beginTransaction();
 		long id = (long) session.save(vo);
 		txn.commit();
@@ -25,45 +25,45 @@ public class TypesModifiersAssociationDao implements ITypesModifiersAssociationD
 	}
 
 	@Override
-	public TypesModifiersAssociationVo get(long id, Session session) {
+	public TypesModifierAssociationVo get(long id, Session session) {
 		Transaction txn = session.beginTransaction();
 		CriteriaBuilder cb = session.getCriteriaBuilder();
-		CriteriaQuery<TypesModifiersAssociationVo> cq = cb.createQuery(TypesModifiersAssociationVo.class);
-		Root<TypesModifiersAssociationVo> root = cq.from(TypesModifiersAssociationVo.class);
-		Query<TypesModifiersAssociationVo> query = session.createQuery(cq);
+		CriteriaQuery<TypesModifierAssociationVo> cq = cb.createQuery(TypesModifierAssociationVo.class);
+		Root<TypesModifierAssociationVo> root = cq.from(TypesModifierAssociationVo.class);
+		Query<TypesModifierAssociationVo> query = session.createQuery(cq);
 
 		cq.where(cb.equal(root.get("id"), id));
-		List<TypesModifiersAssociationVo> lst = query.getResultList();
+		List<TypesModifierAssociationVo> lst = query.getResultList();
 		txn.commit();
 
 		return (((lst == null) || lst.isEmpty()) ? null : lst.get(0));
 	}
 
 	@Override
-	public List<TypesModifiersAssociationVo> getByTypesId(long typeId, Session session) {
+	public List<TypesModifierAssociationVo> getByTypesId(long typeId, Session session) {
 		Transaction txn = session.beginTransaction();
 		CriteriaBuilder cb = session.getCriteriaBuilder();
-		CriteriaQuery<TypesModifiersAssociationVo> cq = cb.createQuery(TypesModifiersAssociationVo.class);
-		Root<TypesModifiersAssociationVo> root = cq.from(TypesModifiersAssociationVo.class);
-		Query<TypesModifiersAssociationVo> query = session.createQuery(cq);
+		CriteriaQuery<TypesModifierAssociationVo> cq = cb.createQuery(TypesModifierAssociationVo.class);
+		Root<TypesModifierAssociationVo> root = cq.from(TypesModifierAssociationVo.class);
+		Query<TypesModifierAssociationVo> query = session.createQuery(cq);
 
 		cq.where(cb.equal(root.get("typesId"), typeId));
-		List<TypesModifiersAssociationVo> lst = query.getResultList();
+		List<TypesModifierAssociationVo> lst = query.getResultList();
 		txn.commit();
 
 		return lst;
 	}
 
 	@Override
-	public List<TypesModifiersAssociationVo> getByModifiersId(long modifierId, Session session) {
+	public List<TypesModifierAssociationVo> getByModifiersId(long modifierId, Session session) {
 		Transaction txn = session.beginTransaction();
 		CriteriaBuilder cb = session.getCriteriaBuilder();
-		CriteriaQuery<TypesModifiersAssociationVo> cq = cb.createQuery(TypesModifiersAssociationVo.class);
-		Root<TypesModifiersAssociationVo> root = cq.from(TypesModifiersAssociationVo.class);
-		Query<TypesModifiersAssociationVo> query = session.createQuery(cq);
+		CriteriaQuery<TypesModifierAssociationVo> cq = cb.createQuery(TypesModifierAssociationVo.class);
+		Root<TypesModifierAssociationVo> root = cq.from(TypesModifierAssociationVo.class);
+		Query<TypesModifierAssociationVo> query = session.createQuery(cq);
 
 		cq.where(cb.equal(root.get("modifiersId"), modifierId));
-		List<TypesModifiersAssociationVo> lst = query.getResultList();
+		List<TypesModifierAssociationVo> lst = query.getResultList();
 		txn.commit();
 
 		return lst;
@@ -92,12 +92,12 @@ public class TypesModifiersAssociationDao implements ITypesModifiersAssociationD
 	public int delete(long id, Session session) {
 		Transaction txn = session.beginTransaction();
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-		CriteriaDelete<TypesModifiersAssociationVo> criteriaDelete =
-				criteriaBuilder.createCriteriaDelete(TypesModifiersAssociationVo.class);
-		Root<TypesModifiersAssociationVo> root = criteriaDelete.from(TypesModifiersAssociationVo.class);
+		CriteriaDelete<TypesModifierAssociationVo> criteriaDelete =
+				criteriaBuilder.createCriteriaDelete(TypesModifierAssociationVo.class);
+		Root<TypesModifierAssociationVo> root = criteriaDelete.from(TypesModifierAssociationVo.class);
 		criteriaDelete.where(criteriaBuilder.equal(root.get("id"), id));
 
-		Query<TypesModifiersAssociationVo> query = session.createQuery(criteriaDelete);
+		Query<TypesModifierAssociationVo> query = session.createQuery(criteriaDelete);
 		int rows = query.executeUpdate();
 		txn.commit();
 

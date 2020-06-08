@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="ORDERS")
-public class OrdersVo implements Serializable, Comparable<OrdersVo>{
+public class OrdersVo implements Serializable, Comparable<OrdersVo> {
 	/**
 	 * 
 	 */

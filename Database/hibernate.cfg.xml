@@ -28,12 +28,12 @@
 	  <property name="hibernate.show_sql">true</property>
       
       <!-- List of XML mapping classes -->
-      <mapping class="com.javaduckspizza.vo.CustomersVo"/>
-      <mapping class="com.javaduckspizza.vo.ModifiersVo"/>
+      <mapping class="com.javaduckspizza.vo.CustomerVo"/>
+      <mapping class="com.javaduckspizza.vo.ModifierVo"/>
       <mapping class="com.javaduckspizza.vo.OrdersVo"/>
       <mapping class="com.javaduckspizza.vo.PizzaToppingAssociationVo"/>
       <mapping class="com.javaduckspizza.vo.PizzaVo"/>
-      <mapping class="com.javaduckspizza.vo.TypesModifiersAssociationVo"/>
+      <mapping class="com.javaduckspizza.vo.TypeModifierAssociationVo"/>
       <mapping class="com.javaduckspizza.vo.TypesVo"/>
       
    </session-factory>

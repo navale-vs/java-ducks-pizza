@@ -10,7 +10,7 @@ import com.javaduckspizza.dao.interfaces.IOrderDao;
 import com.javaduckspizza.vo.OrdersVo;
 import com.javaduckspizza.vo.TypesVo;
 
-public class OrderDao implements IOrderDao {
+public class OrdersDao implements IOrderDao {
 	private static final String HQL_UPDATE = "UPDATE OrdersVo " +
 			"SET CUSTOMER_ID = :customerId, METHOD = :method, TOTAL = :total, STATUS = :status, DATE_TIME_PLACED = :dateTimePlaced, " +
 			"DATE_TIME_DUE = :dateTimeDue, DATE_TIME_READY = :dateTimeReady, DATE_TIME_COMPLETED = :dateTimeCompleted " +

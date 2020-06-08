@@ -11,13 +11,13 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import com.javaduckspizza.dao.TypesModifiersAssociationDao;
-import com.javaduckspizza.vo.TypesModifiersAssociationVo;
+import com.javaduckspizza.vo.TypesModifierAssociationVo;
 
 public class TypesModifiersAssociationDaoFt extends BasicDaoFt {
 	private SessionFactory sf;
 //	private final Logger logger = new ;
 	private TypesModifiersAssociationDao tmad;
-	private TypesModifiersAssociationVo tmav;
+	private TypesModifierAssociationVo tmav;
 
 	public TypesModifiersAssociationDaoFt() {
 		// TODO Auto-generated constructor stub
@@ -44,9 +44,9 @@ public class TypesModifiersAssociationDaoFt extends BasicDaoFt {
 		testDelete();
 	}
 
-	private TypesModifiersAssociationVo generateTypesModifiersAssociationVo() {
-		TypesModifiersAssociationVo vo =
-				new TypesModifiersAssociationVo();
+	private TypesModifierAssociationVo generateTypesModifiersAssociationVo() {
+		TypesModifierAssociationVo vo =
+				new TypesModifierAssociationVo();
 		vo.setTypeId(7L);
 		vo.setModifiersId(1L);
 		return vo;
@@ -76,7 +76,7 @@ public class TypesModifiersAssociationDaoFt extends BasicDaoFt {
 
 		try {
 			session = sf.openSession();
-			TypesModifiersAssociationVo tmavGet = tmad.get(tmav.getId(), session);
+			TypesModifierAssociationVo tmavGet = tmad.get(tmav.getId(), session);
 			System.out.println("tmavGet: " + tmavGet);
 		} finally {
 			if (session != null) {
@@ -91,9 +91,9 @@ public class TypesModifiersAssociationDaoFt extends BasicDaoFt {
 
 		try {
 			session = sf.openSession();
-			List<TypesModifiersAssociationVo> lstTmavGet = tmad.getByTypesId(tmav.getTypeId(), session);
+			List<TypesModifierAssociationVo> lstTmavGet = tmad.getByTypesId(tmav.getTypeId(), session);
 
-			for (TypesModifiersAssociationVo vo : lstTmavGet) {
+			for (TypesModifierAssociationVo vo : lstTmavGet) {
 				System.out.println("vo: " + vo);
 			}
 		} finally {
@@ -109,9 +109,9 @@ public class TypesModifiersAssociationDaoFt extends BasicDaoFt {
 
 		try {
 			session = sf.openSession();
-			List<TypesModifiersAssociationVo> lstTmavGet = tmad.getByModifiersId(tmav.getModifiersId(), session);
+			List<TypesModifierAssociationVo> lstTmavGet = tmad.getByModifiersId(tmav.getModifiersId(), session);
 
-			for (TypesModifiersAssociationVo vo : lstTmavGet) {
+			for (TypesModifierAssociationVo vo : lstTmavGet) {
 				System.out.println("vo: " + vo);
 			}
 		} finally {
@@ -146,7 +146,7 @@ public class TypesModifiersAssociationDaoFt extends BasicDaoFt {
 		try {
 			session = sf.openSession();
 			int rows = tmad.delete(tmav.getId(), session);
-			TypesModifiersAssociationVo tmavDeleted = tmad.get(tmav.getId(), session);
+			TypesModifierAssociationVo tmavDeleted = tmad.get(tmav.getId(), session);
 			System.out.println("tmavDeleted: " + tmavDeleted);
 		} finally {
 			if (session != null) {

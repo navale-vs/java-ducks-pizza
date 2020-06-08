@@ -13,21 +13,21 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import com.javaduckspizza.dao.OrderDao;
+import com.javaduckspizza.dao.OrdersDao;
 import com.javaduckspizza.vo.OrdersVo;
 
-public class OrderDaoFt extends BasicDaoFt {
+public class OrderDaosFt extends BasicDaoFt {
 	private SessionFactory sf;
 	//	private final Logger logger = new ;
 	private OrdersVo ordersVo;
-	private OrderDao ordersDao;
+	private OrdersDao ordersDao;
 
-	public OrderDaoFt() {
-		ordersDao = new OrderDao();
+	public OrderDaosFt() {
+		ordersDao = new OrdersDao();
 	}
 
 	public static void main(String[] args) {
-		OrderDaoFt ordersDaoFt = new OrderDaoFt();
+		OrderDaosFt ordersDaoFt = new OrderDaosFt();
 		ordersDaoFt.runTests();
 	}
 
@@ -127,8 +127,8 @@ public class OrderDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			session = sf.openSession();
-			List<OrdersVo> lstOrderVos = ordersDao.getByStatusId(ordersVo.getStatus(), session);
-			System.out.println("tv is : " + ((lstOrderVos == null) ? "null." : lstOrderVos.toString()));
+			List<OrdersVo> lstOrdersVos = ordersDao.getByStatusId(ordersVo.getStatus(), session);
+			System.out.println("tv is : " + ((lstOrdersVos == null) ? "null." : lstOrdersVos.toString()));
 		} finally {
 			if(session != null) {
 				session.close();

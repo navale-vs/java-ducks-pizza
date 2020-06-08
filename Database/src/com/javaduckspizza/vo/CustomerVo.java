@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="CUSTOMERS")
-public class CustomersVo {
+@Table(name="CUSTOMER")
+public class CustomerVo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ID")
@@ -37,7 +37,7 @@ public class CustomersVo {
 	@Column(name="EMAIL")
 	private String email;
 
-	public CustomersVo() {
+	public CustomerVo() {
 	}
 
 	public Long getId() {
@@ -137,8 +137,8 @@ public class CustomersVo {
 	}
 
 	@Override
-	public CustomersVo clone() {
-		CustomersVo cv = new CustomersVo();
+	public CustomerVo clone() {
+		CustomerVo cv = new CustomerVo();
 		cv.setCity(city);
 		cv.setEmail(email);
 		cv.setFirstName(firstName);

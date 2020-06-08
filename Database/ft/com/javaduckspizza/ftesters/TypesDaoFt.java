@@ -1,20 +1,15 @@
 package com.javaduckspizza.ftesters;
 
-import java.io.File;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import com.javaduckspizza.dao.TypesDao;
+import com.javaduckspizza.util.SessionUtil;
 import com.javaduckspizza.vo.TypesVo;
 
 public class TypesDaoFt extends BasicDaoFt {
-	private SessionFactory sf;
+//	private SessionFactory sf;
 //	private final Logger logger = new ;
 	private TypesVo typesVo;
 
@@ -26,11 +21,15 @@ public class TypesDaoFt extends BasicDaoFt {
 	@Override
 	protected void runTests() {
 		try {
-			StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure(new File("./hibernate.cfg.xml")).build();
-			Metadata md = new MetadataSources(ssr).getMetadataBuilder().build();
-			sf = md.getSessionFactoryBuilder().build();
+			//hardcoding is bad, put filename in a properties file
+//			StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure(new File("../properties/hibernate.cfg.xml")).build();
+//			Configuration configuration = getConfiguration();
+//			Metadata md = new MetadataSources(ssr).getMetadataBuilder().build();
+//			sessionFactory = md.getSessionFactoryBuilder().build();
+//			sf = configuration.buildSessionFactory();
+//			sf.get
 
-			System.out.println("sf is " + ((sf == null) ? "null" : "not null"));
+//			System.out.println("sf is " + ((sf == null) ? "null" : "not null"));
 
 			typesVo = generateTypesVo();
 			testInsert();
@@ -42,11 +41,11 @@ public class TypesDaoFt extends BasicDaoFt {
 		} catch(Throwable t) {
 			t.printStackTrace();
 		} finally {
-			if(sf != null) {
-				sf.close();
-			} else {
-				System.err.println("Failed to build SessionFactory.");
-			}
+//			if(sf != null) {
+//				sf.close();
+//			} else {
+//				System.err.println("Failed to build SessionFactory.");
+//			}
 		}
 	}
 
@@ -63,7 +62,7 @@ public class TypesDaoFt extends BasicDaoFt {
 	protected void testInsert() {
 		Session session = null;
 		try {
-			session = sf.openSession();
+			session = SessionUtil.getInstance().openSession();
 			TypesDao typesDao = new TypesDao();
 			long id = typesDao.insert(typesVo, session);
 			System.out.println("New TypesVo record has ID: " + id);
@@ -80,7 +79,7 @@ public class TypesDaoFt extends BasicDaoFt {
 		System.out.println("Calling update");
 		Session session = null;
 		try {
-			session = sf.openSession();
+			session = SessionUtil.getInstance().openSession();
 			TypesDao typesDao = new TypesDao();
 			TypesVo typesVoClone = typesVo.clone();
 			typesVoClone.setActive(false);
@@ -103,7 +102,7 @@ public class TypesDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			TypesDao td = new TypesDao();
-			session = sf.openSession();
+			session = SessionUtil.getInstance().openSession();
 			TypesVo tv = td.get(typesVo.getId(), session);
 			System.out.println("For id " + typesVo.getId() + ", tv is: " + ((tv == null) ? "null." : tv.toString()));
 		} finally {
@@ -117,7 +116,7 @@ public class TypesDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			TypesDao td = new TypesDao();
-			session = sf.openSession();
+			session = SessionUtil.getInstance().openSession();
 			TypesVo tv = td.getBySequenceCode(typesVo.getSequenceCode(), session);
 			System.out.println("tv is : " + ((tv == null) ? "null." : tv.toString()));
 		} finally {
@@ -131,7 +130,7 @@ public class TypesDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			TypesDao td = new TypesDao();
-			session = sf.openSession();
+			session = SessionUtil.getInstance().openSession();
 			List<TypesVo> lstTypesVos = td.getByCategory(typesVo.getCategory(), session);
 			System.err.println("lstTypesVos is : " + ((lstTypesVos == null) ? "null." : " not null."));
 			for (TypesVo typesVo : lstTypesVos) {
@@ -148,7 +147,7 @@ public class TypesDaoFt extends BasicDaoFt {
 	protected void testDelete() {
 		Session session = null;
 		try {
-			session = sf.openSession();
+			session = SessionUtil.getInstance().openSession();
 			TypesDao typesDao = new TypesDao();
 			int rows = typesDao.delete(typesVo.getId(), session);
 			System.out.println("Rows deleted: " + rows + " for ID " + typesVo.getId());
@@ -158,4 +157,27 @@ public class TypesDaoFt extends BasicDaoFt {
 			}
 		}
 	}
+
+	//handling configuration in the code in order to avoid spending a ton of time trying to figure out how to use a file
+//	private Configuration getConfiguration() {
+//		Configuration configuration = new Configuration();
+//		configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
+//		configuration.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
+//		configuration.setProperty("hibernate.connection.url", "jdbc:postgresql://localhost:5432/JAVADUCKS_PIZZA");
+//		configuration.setProperty("hibernate.connection.username", "pgroot");
+//		configuration.setProperty("hibernate.connection.password", "This_1_is_PGROOTs_Password.");
+//		configuration.setProperty("hibernate.connection.pool_size", "5");
+//		configuration.setProperty("hibernate.connection.autocommit", "false");
+//		configuration.setProperty("hibernate.show_sql", "true");
+//
+//		configuration.addAnnotatedClass(CustomerVo.class);
+//		configuration.addAnnotatedClass(ModifierVo.class);
+//		configuration.addAnnotatedClass(OrdersVo.class);
+//		configuration.addAnnotatedClass(PizzaToppingAssociationVo.class);
+//		configuration.addAnnotatedClass(PizzaVo.class);
+//		configuration.addAnnotatedClass(TypesModifierAssociationVo.class);
+//		configuration.addAnnotatedClass(TypesVo.class);
+//
+//		return configuration;
+//	}
 }

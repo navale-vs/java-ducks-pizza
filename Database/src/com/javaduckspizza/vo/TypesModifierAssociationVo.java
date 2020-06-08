@@ -10,8 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="TYPES_MODIFIERS_ASSOCIATION")
-public class TypesModifiersAssociationVo {
+@Table(name="TYPE_MODIFIER_ASSOCIATION")
+public class TypesModifierAssociationVo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ID")
@@ -25,9 +25,9 @@ public class TypesModifiersAssociationVo {
 	private TypesVo typesVo;
 	@ManyToOne
 	@JoinColumn(name = "MODIFIERS_ID", nullable = false, insertable = false, updatable = false)
-	private ModifiersVo modifiersVo;
+	private ModifierVo modifiersVo;
 
-	public TypesModifiersAssociationVo() {
+	public TypesModifierAssociationVo() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -56,8 +56,8 @@ public class TypesModifiersAssociationVo {
 	}
 
 	@Override
-	public TypesModifiersAssociationVo clone() {
-		TypesModifiersAssociationVo tmav = new TypesModifiersAssociationVo();
+	public TypesModifierAssociationVo clone() {
+		TypesModifierAssociationVo tmav = new TypesModifierAssociationVo();
 		tmav.setTypeId(typesId);
 		tmav.setId(id);
 		tmav.setModifiersId(modifiersId);

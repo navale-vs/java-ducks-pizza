@@ -10,10 +10,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import com.javaduckspizza.dao.interfaces.ITypesDao;
+import com.javaduckspizza.dao.interfaces.ITypeDao;
 import com.javaduckspizza.vo.TypesVo;
 
-public class TypesDao implements ITypesDao {
+public class TypesDao implements ITypeDao {
 	private static final String HQL_UPDATE = "UPDATE TypesVo " +
 			"SET DESCRIPTION = :description, IS_ACTIVE = :isActive " +
 			"WHERE ID = :id";

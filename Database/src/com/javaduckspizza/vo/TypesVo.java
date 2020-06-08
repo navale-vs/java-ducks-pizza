@@ -11,11 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @Table(name="TYPES", schema="public", uniqueConstraints = {
 		@UniqueConstraint(columnNames = "ID"),
 		@UniqueConstraint(columnNames = "SEQUENCE_CODE")})
+@XmlRootElement(name = "types")
 public class TypesVo implements Serializable, Comparable<TypesVo> {
 	/**
 	 * 
@@ -24,14 +27,23 @@ public class TypesVo implements Serializable, Comparable<TypesVo> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ID")
+	@XmlElement
 	private Long id;
+
 	@Column(name="CATEGORY")
+	@XmlElement
 	private String category;
+
 	@Column(name="DESCRIPTION")
+	@XmlElement
 	private String description;
+
 	@Column(name="SEQUENCE_CODE")
+	@XmlElement
 	private String sequenceCode;
+
 	@Column(name="IS_ACTIVE")
+	@XmlElement
 	private boolean active;
 
 	public TypesVo() {

@@ -14,9 +14,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="MODIFIERS", schema="public", uniqueConstraints = {
+@Table(name="MODIFIER", schema="public", uniqueConstraints = {
 		@UniqueConstraint(columnNames = "ID")})
-public class ModifiersVo {
+public class ModifierVo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ID")
@@ -33,7 +33,7 @@ public class ModifiersVo {
 	@JoinColumn(name = "TYPE_ID", nullable = false, insertable = false, updatable = false)
 	private TypesVo typesVo;
 
-	public ModifiersVo() {
+	public ModifierVo() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -97,8 +97,8 @@ public class ModifiersVo {
 	}
 
 	@Override()
-	public ModifiersVo clone() {
-		ModifiersVo mvClone = new ModifiersVo();
+	public ModifierVo clone() {
+		ModifierVo mvClone = new ModifierVo();
 		mvClone.setDateActive(dateActive);
 		mvClone.setDateExpired(dateExpired);
 		mvClone.setId(id);

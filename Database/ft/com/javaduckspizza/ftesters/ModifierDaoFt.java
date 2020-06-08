@@ -13,21 +13,21 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import com.javaduckspizza.dao.ModifiersDao;
-import com.javaduckspizza.vo.ModifiersVo;
+import com.javaduckspizza.dao.ModifierDao;
+import com.javaduckspizza.vo.ModifierVo;
 
-public class ModifiersDaoFt extends BasicDaoFt {
+public class ModifierDaoFt extends BasicDaoFt {
 	SessionFactory sf;
 //	private final Logger logger = new ;
-	ModifiersVo modifiersVo;
-	ModifiersDao modifiersDao;
+	ModifierVo modifierVo;
+	ModifierDao modifierDao;
 
-	public ModifiersDaoFt() {
-		modifiersDao = new ModifiersDao();
+	public ModifierDaoFt() {
+		modifierDao = new ModifierDao();
 	}
 
 	public static void main(String[] args) {
-		ModifiersDaoFt mdf = new ModifiersDaoFt();
+		ModifierDaoFt mdf = new ModifierDaoFt();
 		mdf.runTests();
 	}
 
@@ -40,7 +40,7 @@ public class ModifiersDaoFt extends BasicDaoFt {
 
 			System.out.println("sf is " + ((sf == null) ? "null" : "not null"));
 			
-			modifiersVo = generateModifiersVo();
+			modifierVo = generateModifiersVo();
 			testInsert();
 			testGetByPrimaryKey();
 			testUpdate();
@@ -59,8 +59,8 @@ public class ModifiersDaoFt extends BasicDaoFt {
 		}
 	}
 
-	private ModifiersVo generateModifiersVo() {
-		ModifiersVo mv = new ModifiersVo();
+	private ModifierVo generateModifiersVo() {
+		ModifierVo mv = new ModifierVo();
 		mv.setDateActive(new Date(Calendar.getInstance().getTimeInMillis()));
 		mv.setDateExpired(null);
 		mv.setTypeId(1L);
@@ -73,9 +73,9 @@ public class ModifiersDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			session = sf.openSession();
-			long id = modifiersDao.insert(modifiersVo, session);
+			long id = modifierDao.insert(modifierVo, session);
 			System.out.println("New ModifiersVo record has ID: " + id);
-			modifiersVo.setId(id);
+			modifierVo.setId(id);
 		} finally {
 			if(session != null) {
 				session.close();
@@ -88,12 +88,12 @@ public class ModifiersDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			session = sf.openSession();
-			ModifiersVo mvClone = modifiersVo.clone();
+			ModifierVo mvClone = modifierVo.clone();
 			mvClone.setDateExpired(new Date( Calendar.getInstance().getTimeInMillis() ));
-			modifiersDao.update(mvClone, session);
+			modifierDao.update(mvClone, session);
 
-			ModifiersVo mvAfterUpdate = modifiersDao.get(modifiersVo.getId(), session);
-			System.out.println("modifiersVo" + modifiersVo.toString());
+			ModifierVo mvAfterUpdate = modifierDao.get(modifierVo.getId(), session);
+			System.out.println("modifiersVo" + modifierVo.toString());
 			System.out.println("mvClone" + mvClone.toString());
 			System.out.println("mvAfterUpdate" + mvAfterUpdate.toString());
 		} finally {
@@ -109,7 +109,7 @@ public class ModifiersDaoFt extends BasicDaoFt {
 
 		try {
 			session = sf.openSession();
-			int rows = modifiersDao.delete(modifiersVo.getId(), session);
+			int rows = modifierDao.delete(modifierVo.getId(), session);
 			System.out.println("Rows deleted: " + rows);
 		} finally {
 			if(session != null) {
@@ -123,7 +123,7 @@ public class ModifiersDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			session = sf.openSession();
-			List<ModifiersVo> tv = modifiersDao.getByTypeId(1, session);
+			List<ModifierVo> tv = modifierDao.getByTypeId(1, session);
 			System.out.println("tv is : " + ((tv == null) ? "null." : tv.toString()));
 		} finally {
 			if(session != null) {
@@ -136,7 +136,7 @@ public class ModifiersDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			session = sf.openSession();
-			List<ModifiersVo> tv = modifiersDao.getByTypeId(1, session);
+			List<ModifierVo> tv = modifierDao.getByTypeId(1, session);
 			System.out.println("tv is : " + ((tv == null) ? "null." : tv.toString()));
 		} finally {
 			if(session != null) {
@@ -149,9 +149,9 @@ public class ModifiersDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			session = sf.openSession();
-			List<ModifiersVo> lstModifiersVos = modifiersDao.getByDateExpired(new Date(Calendar.getInstance().getTimeInMillis()), session);
+			List<ModifierVo> lstModifiersVos = modifierDao.getByDateExpired(new Date(Calendar.getInstance().getTimeInMillis()), session);
 			System.err.println("lstModifiersVos is : " + ((lstModifiersVos == null) ? "null." : " not null."));
-			for (ModifiersVo typesVo : lstModifiersVos) {
+			for (ModifierVo typesVo : lstModifiersVos) {
 				System.out.println(typesVo.toString());
 			}
 		} finally {
