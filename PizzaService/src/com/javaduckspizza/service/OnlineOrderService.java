@@ -15,6 +15,7 @@ import org.hibernate.Session;
 import com.javaduckspizza.service.dao.PizzaServiceDao;
 import com.javaduckspizza.service.dao.TypesServiceDao;
 import com.javaduckspizza.util.SessionUtil;
+import com.javaduckspizza.vo.PizzaVo;
 import com.javaduckspizza.vo.TypesVo;  
 
 @Path("/JavaDucksOnlineOrderingSystem")
@@ -25,19 +26,56 @@ public class OnlineOrderService {
 	public static final String FAILURE_MESSAGE = "</result>FAILURE</result>";
 
 	@Inject
-	private PizzaServiceDao pizzaServiceDao;
+	protected PizzaServiceDao pizzaServiceDao = new PizzaServiceDao();
 	@Inject
-	private TypesServiceDao typesServiceDao;
+	protected TypesServiceDao typesServiceDao = new TypesServiceDao();
 
 	public OnlineOrderService() {
-		pizzaServiceDao = new PizzaServiceDao();
-		typesServiceDao = new TypesServiceDao();
+//		pizzaServiceDao = new PizzaServiceDao();
+//		typesServiceDao = new TypesServiceDao();
+	}
+
+	/*
+	 * Pizza
+	 */
+	@GET
+	@Path("/pizza/id/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public PizzaVo getPizzaById(@PathParam(value = "id") long id) {
+		Session session = SessionUtil.getInstance().openSession();
+		PizzaVo pv = pizzaServiceDao.getById(id, session);
+		session.close();
+		return pv;
 	}
 
 	@GET
+	@Path("/pizza/orderid/{orderId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public PizzaVo getPizzaByOrderId(@PathParam(value = "orderId") long orderId) {
+		Session session = SessionUtil.getInstance().openSession();
+		PizzaVo pv = pizzaServiceDao.getById(orderId, session);
+		session.close();
+		return pv;
+	}
+
+	@GET
+	@Path("/pizza/orderidandstatus/{orderId}/{status}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<PizzaVo> getPizzaByOrderIdAndStatus(@PathParam(value = "orderId") long orderId,
+			@PathParam(value = "status") long status) {
+		Session session = SessionUtil.getInstance().openSession();
+		List<PizzaVo> lstPv = pizzaServiceDao.getByOrderIdAndStatus(orderId, status, session);
+		session.close();
+		return lstPv;
+	}
+
+	/*
+	 * Types
+	 */
+	@GET
 	@Path("/types/id/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public TypesVo getTypesById(@PathParam(value = "id") long id) {
+	public TypesVo getTypeById(@PathParam(value = "id") long id) {
 		Session session = SessionUtil.getInstance().openSession();
 		TypesVo tv = typesServiceDao.getById(id, session);
 		session.close();
@@ -66,4 +104,5 @@ public class OnlineOrderService {
 
 		return lst;
 	}
+
 }

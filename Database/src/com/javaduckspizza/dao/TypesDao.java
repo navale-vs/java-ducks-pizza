@@ -2,10 +2,6 @@ package com.javaduckspizza.dao;
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -50,7 +46,7 @@ public class TypesDao implements ITypeDao {
 
 	@Override
 	public TypesVo get(long id, Session session) {
-		System.out.println("In getBySequenceCode(), using " + id);
+		System.out.println("In get(), using " + id);
 		Query<TypesVo> query = session.createQuery(HQL_GET_BY_ID);
 		query.setParameter("id", id);
 		List<TypesVo> lstTypes = query.list();
@@ -70,6 +66,7 @@ public class TypesDao implements ITypeDao {
 
 	@Override
 	public List<TypesVo> getByCategory(String category, Session session) {
+		System.out.println("In getBycategory(), using " + category);
 		List<TypesVo> lstTypes = null;
 		Query<TypesVo> query = session.createQuery(HQL_GET_BY_CATEGORY);
 		query.setParameter("category", category);

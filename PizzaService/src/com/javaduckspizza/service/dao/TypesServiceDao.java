@@ -13,7 +13,6 @@ public class TypesServiceDao {
 	private final TypesDao typesDao = new TypesDao();
 
 	public TypesVo getById(long id, Session session) {
-		System.out.println("In get with id: " + id);
 		return typesDao.get(id, session);
 	}
 
