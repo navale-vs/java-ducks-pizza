@@ -24,8 +24,8 @@ public class OrdersVo implements Serializable, Comparable<OrdersVo> {
 	private Long id;
 	@Column(name="CUSTOMER_ID")
 	private Long customerId;
-	@Column(name="METHOD")
-	private Long method; //CARRYOUT, DINE-IN, PICKUP
+	@Column(name="RETRIEVAL_METHOD")
+	private Long retrievalMethod; //CARRYOUT, PICKUP
 	@Column(name="TOTAL")
 	private BigDecimal total;
 	@Column(name="STATUS") //FROM TYPES TABLE
@@ -58,12 +58,12 @@ public class OrdersVo implements Serializable, Comparable<OrdersVo> {
 		this.customerId = customerId;
 	}
 
-	public Long getMethod() {
-		return method;
+	public Long getRetrievalMethod() {
+		return retrievalMethod;
 	}
 
-	public void setMethod(Long method) {
-		this.method = method;
+	public void setRetrievalMethod(Long method) {
+		this.retrievalMethod = method;
 	}
 
 	public BigDecimal getTotal() {
@@ -119,7 +119,7 @@ public class OrdersVo implements Serializable, Comparable<OrdersVo> {
 		StringBuffer sb = new StringBuffer();
 		sb.append("ID: ").append(id).append('\t');
 		sb.append("CUSTOMER_ID: ").append(customerId).append('\t');
-		sb.append("METHOD: ").append(method).append('\t');
+		sb.append("METHOD: ").append(retrievalMethod).append('\t');
 		sb.append("TOTAL: ").append(total).append('\t');
 		sb.append("STATUS: ").append(status).append('\t');
 		sb.append("DATE_TIME_PLACED: ").append(dateTimePlaced).append('\t');
@@ -139,7 +139,7 @@ public class OrdersVo implements Serializable, Comparable<OrdersVo> {
 		ov.setDateTimePlaced(dateTimePlaced);
 		ov.setDateTimeReady(dateTimeReady);
 		ov.setId(id);
-		ov.setMethod(method);
+		ov.setRetrievalMethod(retrievalMethod);
 		ov.setStatus(status);
 		ov.setTotal(total);
 

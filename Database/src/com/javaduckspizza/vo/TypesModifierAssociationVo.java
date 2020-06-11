@@ -23,9 +23,9 @@ public class TypesModifierAssociationVo {
 	@ManyToOne
 	@JoinColumn(name = "TYPES_ID", nullable = false, insertable = false, updatable = false)
 	private TypesVo typesVo;
-	@ManyToOne
-	@JoinColumn(name = "MODIFIERS_ID", nullable = false, insertable = false, updatable = false)
-	private ModifierVo modifiersVo;
+//	@ManyToOne
+//	@JoinColumn(name = "MODIFIERS_ID", nullable = false, insertable = false, updatable = false)
+//	private ModifierVo modifiersVo;
 
 	public TypesModifierAssociationVo() {
 		// TODO Auto-generated constructor stub

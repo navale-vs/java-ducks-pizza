@@ -65,7 +65,7 @@ public class OrderDaosFt extends BasicDaoFt {
 		ordersVo.setDateTimeDue(null);
 		ordersVo.setDateTimePlaced(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 		ordersVo.setDateTimeReady(null);
-		ordersVo.setMethod(1L);
+		ordersVo.setRetrievalMethod(1L);
 		ordersVo.setStatus(1L);
 		ordersVo.setTotal(BigDecimal.valueOf(10.01));
 		return ordersVo;

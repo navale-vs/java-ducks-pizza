@@ -7,20 +7,20 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.javaduckspizza.dao.interfaces.ICustomerDao;
-import com.javaduckspizza.vo.CustomersVo;
+import com.javaduckspizza.vo.CustomerVo;
 
-public class CustomersDao implements ICustomerDao {
-	private static final String HQL_UPDATE = "UPDATE CustomersVo " +
+public class CustomerDao implements ICustomerDao {
+	private static final String HQL_UPDATE = "UPDATE CustomerVo " +
 			"SET FIRST_NAME = :firstName, MIDDLE_NAME = :middleName, LAST_NAME = :lastName, PHONE = :phone, " +
 			"STREET_ADDRESS_1 = :streetAddress1, STREET_ADDRESS_2 = :streetAddress2," +
 			"CITY = :city, STATE = :state, ZIPCODE_5 = :zipcode5, ZIPCODE_4 = :zipcode4, EMAIL = :email " +
 			"WHERE ID = :id";
-	private static final String HQL_DELETE = "DELETE FROM CustomersVo WHERE ID = :id";
-	private static final String HQL_GET_BY_ID = "FROM CustomersVo WHERE ID = :id";
-	private static final String HQL_GET_BY_EMAIL = "FROM CustomersVo WHERE EMAIL = :email";
+	private static final String HQL_DELETE = "DELETE FROM CustomerVo WHERE ID = :id";
+	private static final String HQL_GET_BY_ID = "FROM CustomerVo WHERE ID = :id";
+	private static final String HQL_GET_BY_EMAIL = "FROM CustomerVo WHERE EMAIL = :email";
 
 	@Override
-	public long insert(CustomersVo cv, Session session) {
+	public long insert(CustomerVo cv, Session session) {
 		Transaction txn = session.beginTransaction();
 		long id = (long) session.save(cv);
 		txn.commit();
@@ -31,7 +31,7 @@ public class CustomersDao implements ICustomerDao {
 	@Override
 	public int delete(long id, Session session) {
 		Transaction txn = session.beginTransaction();
-		Query<CustomersDao> query = session.createQuery(HQL_DELETE);
+		Query<CustomerDao> query = session.createQuery(HQL_DELETE);
 		query.setParameter("id", id);
 		int rows = query.executeUpdate();
 		txn.commit();
@@ -40,9 +40,9 @@ public class CustomersDao implements ICustomerDao {
 	}
 
 	@Override
-	public int update(CustomersVo cv, Session session) {
+	public int update(CustomerVo cv, Session session) {
 		Transaction txn = session.beginTransaction();
-		Query<CustomersDao> query = session.createQuery(HQL_UPDATE);
+		Query<CustomerDao> query = session.createQuery(HQL_UPDATE);
 		query.setParameter("firstName", cv.getFirstName());
 		query.setParameter("middleName", cv.getMiddleName());
 		query.setParameter("lastName", cv.getLastName());
@@ -62,22 +62,22 @@ public class CustomersDao implements ICustomerDao {
 	}
 
 	@Override
-	public CustomersVo getById(long id, Session session) {
+	public CustomerVo getById(long id, Session session) {
 		Transaction txn = session.beginTransaction();
-		Query<CustomersVo> query = session.createQuery(HQL_GET_BY_ID);
+		Query<CustomerVo> query = session.createQuery(HQL_GET_BY_ID);
 		query.setParameter("id", id);
-		List<CustomersVo> lst = query.list();
+		List<CustomerVo> lst = query.list();
 		txn.commit();
 
 		return (((lst == null) || lst.isEmpty()) ? null : lst.get(0));
 	}
 
 	@Override
-	public CustomersVo getByEmail(String email, Session session) {
+	public CustomerVo getByEmail(String email, Session session) {
 		Transaction txn = session.beginTransaction();
-		Query<CustomersVo> query = session.createQuery(HQL_GET_BY_EMAIL);
+		Query<CustomerVo> query = session.createQuery(HQL_GET_BY_EMAIL);
 		query.setParameter("email", email);
-		List<CustomersVo> lstCv = query.list();
+		List<CustomerVo> lstCv = query.list();
 		txn.commit();
 
 		return (((lstCv == null) || lstCv.isEmpty()) ? null : lstCv.get(0));

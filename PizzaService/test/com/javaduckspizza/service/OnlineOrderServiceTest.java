@@ -2,6 +2,14 @@ package com.javaduckspizza.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.After;
@@ -22,8 +30,6 @@ class OnlineOrderServiceTest {
 	OnlineOrderService oos = new OnlineOrderService();
 	@Mock
 	TypesServiceDao typesServiceDao;
-//	@Mock
-	Session session;
 //	private Map<Long, TypesVo> mapTypeVos = new HashMap<Long, TypesVo>();
 
 
@@ -40,14 +46,12 @@ class OnlineOrderServiceTest {
 
 	@Test
 	void testGetTypesById() {
+		MockitoAnnotations.initMocks(this); //because setUp is not getting run before
 		Long id = Long.valueOf(1L);
-		TypesVo typesVo = new TypesVo();
-		typesVo.setId(id);
 
-//		when(typesServiceDao.getById(id, session)).thenReturn(typesVo);
 		TypesVo tv = oos.getTypeById(id);
-		assertEquals(id, tv.getId());
-//		verify(typesServiceDao, times(1)).getById(id, session);
+//		assertEquals(id, tv.getId());
+		verify(typesServiceDao, times(1)).getById(anyLong(), any(Session.class));
 	}
 
 	@Test
@@ -67,6 +71,14 @@ class OnlineOrderServiceTest {
 
 	@Test
 	void testGetTypesByCategory() {
+		String category = "TEST";
+		List<TypesVo> lstTypeVos = oos.getTypesByCategory(category);
+		System.out.println("lstTypeVos.size(): " + lstTypeVos.size());
+
+		for (TypesVo typesVo : lstTypeVos) {
+			System.out.println("typesVo: " + typesVo);
+			assertEquals(category, typesVo.getCategory());
+		}
 	}
 
 //	private void populateTypesVoList() {

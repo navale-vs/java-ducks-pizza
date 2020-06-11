@@ -2,7 +2,6 @@ package com.javaduckspizza.service;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,9 +11,15 @@ import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Session;
 
+import com.javaduckspizza.service.dao.CustomerServiceDao;
+import com.javaduckspizza.service.dao.ModifierServiceDao;
+import com.javaduckspizza.service.dao.OrderServiceDao;
 import com.javaduckspizza.service.dao.PizzaServiceDao;
 import com.javaduckspizza.service.dao.TypesServiceDao;
 import com.javaduckspizza.util.SessionUtil;
+import com.javaduckspizza.vo.CustomerVo;
+import com.javaduckspizza.vo.ModifierVo;
+import com.javaduckspizza.vo.OrdersVo;
 import com.javaduckspizza.vo.PizzaVo;
 import com.javaduckspizza.vo.TypesVo;  
 
@@ -25,14 +30,64 @@ public class OnlineOrderService {
 	public static final String SUCCESS_MESSAGE = "</result>SUCCESS</result>";
 	public static final String FAILURE_MESSAGE = "</result>FAILURE</result>";
 
-	@Inject
-	protected PizzaServiceDao pizzaServiceDao = new PizzaServiceDao();
-	@Inject
-	protected TypesServiceDao typesServiceDao = new TypesServiceDao();
+	private CustomerServiceDao customerServiceDao = new CustomerServiceDao();
+	private ModifierServiceDao modifierServiceDao = new ModifierServiceDao();
+	private OrderServiceDao orderServiceDao = new OrderServiceDao();
+	private PizzaServiceDao pizzaServiceDao = new PizzaServiceDao();
+	private TypesServiceDao typesServiceDao = new TypesServiceDao();
 
 	public OnlineOrderService() {
-//		pizzaServiceDao = new PizzaServiceDao();
-//		typesServiceDao = new TypesServiceDao();
+	}
+
+	/**
+	 * Customers
+	 */
+	@GET
+	@Path("/customer/id/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public CustomerVo getCustomerById(@PathParam(value = "id") long id) {
+		return customerServiceDao.getById(id);
+	}
+
+	@GET
+	@Path("/customer/email/{email}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public CustomerVo getCustomerByEmail(@PathParam(value = "email") String email) {
+		return customerServiceDao.getByEmail(email);
+	}
+
+	/*
+	 * Modifiers
+	 */
+	@GET
+	@Path("/modifiers/currentbyid/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ModifierVo getCurrentModifierByType(@PathParam(value = "type") long type) {
+		return modifierServiceDao.getCurrentByType(type);
+	}
+
+	/*
+	 * Orders
+	 */
+	@GET
+	@Path("/orders/id/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public OrdersVo getOrderById(@PathParam(value = "id") long id) {
+		return orderServiceDao.getById(id);
+	}
+
+	@GET
+	@Path("/orders/customerid/{customerid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<OrdersVo> getOrdersByCustomerId(@PathParam(value = "id") long id) {
+		return orderServiceDao.getByCustomerId(id);
+	}
+
+	@GET
+	@Path("/orders/statusid/{statusid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<OrdersVo> getOrdersByStatus(@PathParam(value = "id") long id) {
+		return orderServiceDao.getByStatusId(id);
 	}
 
 	/*
@@ -51,11 +106,11 @@ public class OnlineOrderService {
 	@GET
 	@Path("/pizza/orderid/{orderId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public PizzaVo getPizzaByOrderId(@PathParam(value = "orderId") long orderId) {
+	public List<PizzaVo> getPizzaByOrderId(@PathParam(value = "orderId") long orderId) {
 		Session session = SessionUtil.getInstance().openSession();
-		PizzaVo pv = pizzaServiceDao.getById(orderId, session);
+		List<PizzaVo> lstPizzaVo = pizzaServiceDao.getByOrderId(orderId, session);
 		session.close();
-		return pv;
+		return lstPizzaVo;
 	}
 
 	@GET
