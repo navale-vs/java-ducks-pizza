@@ -1,12 +1,19 @@
 package com.javaduckspizza.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Session;
@@ -97,33 +104,49 @@ public class OnlineOrderService {
 	@Path("/pizza/id/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public PizzaVo getPizzaById(@PathParam(value = "id") long id) {
-		Session session = SessionUtil.getInstance().openSession();
-		PizzaVo pv = pizzaServiceDao.getById(id, session);
-		session.close();
+		PizzaVo pv = pizzaServiceDao.getById(id);
 		return pv;
 	}
 
 	@GET
-	@Path("/pizza/orderid/{orderId}")
+	@Path("/pizza/orderid/{orderid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<PizzaVo> getPizzaByOrderId(@PathParam(value = "orderId") long orderId) {
 		Session session = SessionUtil.getInstance().openSession();
-		List<PizzaVo> lstPizzaVo = pizzaServiceDao.getByOrderId(orderId, session);
+		List<PizzaVo> lstPizzaVo = pizzaServiceDao.getByOrderId(orderId);
 		session.close();
 		return lstPizzaVo;
 	}
 
 	@GET
-	@Path("/pizza/orderidandstatus/{orderId}/{status}")
+	@Path("/pizza/orderidandstatus/{orderid}/{status}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<PizzaVo> getPizzaByOrderIdAndStatus(@PathParam(value = "orderId") long orderId,
 			@PathParam(value = "status") long status) {
 		Session session = SessionUtil.getInstance().openSession();
-		List<PizzaVo> lstPv = pizzaServiceDao.getByOrderIdAndStatus(orderId, status, session);
+		List<PizzaVo> lstPv = pizzaServiceDao.getByOrderIdAndStatus(orderId, status);
 		session.close();
 		return lstPv;
 	}
 
+	@POST
+	@Path("/pizza/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public long addPizza(@FormParam("crust") long crust, @FormParam("orderId") long orderId, @FormParam("price") BigDecimal price,
+			@FormParam("sauce") long sauce, @FormParam("size") long size, @FormParam("status") long status,
+			@Context HttpServletResponse response) {
+		PizzaVo pizzaVo = new PizzaVo();
+		pizzaVo.setCrust(crust);
+		pizzaVo.setOrderId(orderId);
+		pizzaVo.setPrice(price);
+		pizzaVo.setSauce(sauce);
+		pizzaVo.setSize(size);
+		pizzaVo.setStatus(status);
+
+		long id = pizzaServiceDao.addPizza(pizzaVo);
+		return id;
+	}
 	/*
 	 * Types
 	 */
@@ -132,7 +155,7 @@ public class OnlineOrderService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public TypesVo getTypeById(@PathParam(value = "id") long id) {
 		Session session = SessionUtil.getInstance().openSession();
-		TypesVo tv = typesServiceDao.getById(id, session);
+		TypesVo tv = typesServiceDao.getById(id);
 		session.close();
 
 		return tv;
@@ -143,7 +166,7 @@ public class OnlineOrderService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public TypesVo getTypesBySequenceCode(@PathParam(value = "sequenceCode") String sequenceCode) {
 		Session session = SessionUtil.getInstance().openSession();
-		TypesVo tv = typesServiceDao.getBySequenceCode(sequenceCode, session);
+		TypesVo tv = typesServiceDao.getBySequenceCode(sequenceCode);
 		session.close();
 
 		return tv;
@@ -154,7 +177,7 @@ public class OnlineOrderService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<TypesVo> getTypesByCategory(@PathParam(value = "category") String category) {
 		Session session = SessionUtil.getInstance().openSession();
-		List<TypesVo> lst = typesServiceDao.getByCategory(category, session);
+		List<TypesVo> lst = typesServiceDao.getByCategory(category);
 		session.close();
 
 		return lst;

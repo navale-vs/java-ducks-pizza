@@ -18,7 +18,11 @@ public class ModifierDao implements IModifiersDao {
 	private static final String HQL_GET_BY_TYPE_ID = "FROM ModifierVo WHERE TYPE_ID = :typeId";
 	private static final String HQL_GET_BY_DATE_ACTIVE = "FROM ModifierVo WHERE DATE_ACTIVE = :dateActive";
 	private static final String HQL_GET_BY_DATE_EXPIRED = "FROM ModifierVo WHERE DATE_EXPIRED = :dateExpired";
-//	private static final String HQL_GET_WHERE_NOT_EXPIRED = "FROM ModifierVo WHERE DATE_EXPIRED > :date OR DATE_EXPIRED IS NULL";
+	private static final String HQL_GET_WHERE_NOT_EXPIRED = "FROM ModifierVo WHERE DATE_EXPIRED IS NULL OR"
+			+ " (DATE_ACTIVE <= :dateActive ";
+	private static final String HQL_GET_BY_TYPE_WHERE_NOT_EXPIRED = "FROM ModifierVo WHERE TYPE_ID = :typeId AND"
+			+ " DATE_ACTIVE <= CURRENT_DATE AND "
+			+ " (DATE_EXPIRED IS NULL OR DATE_EXPIRED > CURRENT_DATE)";
 	private static final String HQL_DELETE = "DELETE FROM ModifierVo WHERE ID = :id";
 
 	public ModifierDao() {}
@@ -87,6 +91,16 @@ public class ModifierDao implements IModifiersDao {
 		Transaction txn = session.beginTransaction();
 		Query<ModifierVo> query = session.createQuery(HQL_GET_BY_DATE_EXPIRED);
 		query.setParameter("dateExpired", expiration);
+		List<ModifierVo> lstModifiers = query.list();
+		txn.commit();
+		return lstModifiers;
+	}
+
+//	@Override
+	public List<ModifierVo> getCurrentByType(long typeId, Session session) {
+		Transaction txn = session.beginTransaction();
+		Query<ModifierVo> query = session.createQuery(HQL_GET_BY_TYPE_WHERE_NOT_EXPIRED);
+		query.setParameter("typeId", typeId);
 		List<ModifierVo> lstModifiers = query.list();
 		txn.commit();
 		return lstModifiers;

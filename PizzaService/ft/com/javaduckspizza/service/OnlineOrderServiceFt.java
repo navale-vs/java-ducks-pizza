@@ -1,9 +1,13 @@
 package com.javaduckspizza.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
 
 import com.javaduckspizza.vo.CustomerVo;
 import com.javaduckspizza.vo.ModifierVo;
@@ -114,6 +118,30 @@ public class OnlineOrderServiceFt {
 		final long orderId = 1L;
 		List<PizzaVo> lstPizza = oos.getPizzaByOrderId(orderId);
 		System.out.println("getPizzaByOrderId: " + ( ((lstPizza != null) && !lstPizza.isEmpty()) ? PASS : FAIL));
+	}
+	
+	private void addPizza() {
+		System.out.println("In addPizza()...");
+//		PizzaVo pizzaVo = new PizzaVo();
+//		pizzaVo.setCrust(5L);
+//		pizzaVo.setOrderId(4L);
+//		pizzaVo.setPrice(BigDecimal.valueOf(12.99));
+//		pizzaVo.setSauce(2L);
+//		pizzaVo.setSize(3L);
+//		pizzaVo.setStatus(9L);
+//		oos.addPizza(5L, 4L, BigDecimal.valueOf(12.99), 2L, 3L, 9L);
+
+		Form form = new Form();
+		form.param("crust", "5L");
+		form.param("orderId", "4L");
+		form.param("price", BigDecimal.valueOf(12.99).toString());
+		form.param("sauce", "2L");
+		form.param("size", "3L");
+		form.param("status", "9L");
+
+		String result = client.target(SERVICE_URL).request(MediaType.APPLICATION_JSON).
+				post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE), String.class);
+		System.out.println("result: " + result);
 	}
 
 	/*

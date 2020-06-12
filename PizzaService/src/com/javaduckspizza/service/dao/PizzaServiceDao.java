@@ -5,24 +5,51 @@ import java.util.List;
 import org.hibernate.Session;
 
 import com.javaduckspizza.dao.PizzaDao;
+import com.javaduckspizza.util.SessionUtil;
 import com.javaduckspizza.vo.PizzaVo;
 
 public class PizzaServiceDao {
 	private PizzaDao pizzaDao = new PizzaDao();
 
-	public PizzaVo getById(long id, Session session) {
-		return pizzaDao.get(id, session);
+	public PizzaVo getById(long id) {
+		Session session = SessionUtil.getInstance().openSession();
+		PizzaVo pizzaVo = pizzaDao.get(id, session);
+		session.close();
+
+		return pizzaVo;
+	}
+	
+	public List<PizzaVo> getByOrderId(long orderId) {
+		Session session = SessionUtil.getInstance().openSession();
+		List<PizzaVo> lst = pizzaDao.getByOrderId(orderId, session);
+		session.close();
+
+		return lst;
 	}
 
-	public List<PizzaVo> getByOrderId(long id, Session session) {
-		return pizzaDao.getByOrderId(id, session);
+//o
+
+	public List<PizzaVo> getByOrderIdAndStatus(long id, long status) {
+		Session session = SessionUtil.getInstance().openSession();
+		List<PizzaVo> lstPizzaVos = pizzaDao.getByOrderIdAndStatus(id, status, session);
+		session.close();
+		
+		return lstPizzaVos;
 	}
 
-	public List<PizzaVo> getByOrderIdAndStatus(long id, long status, Session session) {
-		return pizzaDao.getByOrderIdAndStatus(id, status, session);
+	public List<PizzaVo> getByStatus(long id) {
+		Session session = SessionUtil.getInstance().openSession();
+		List<PizzaVo> lstPizzaVos = pizzaDao.getByStatus(id, session);
+		session.close();
+
+		return lstPizzaVos;
 	}
 
-	public List<PizzaVo> getByStatus(long id, Session session) {
-		return pizzaDao.getByStatus(id, session);
+	public long addPizza(PizzaVo pizzaVo) {
+		Session session = SessionUtil.getInstance().openSession();
+		long pizzaId = pizzaDao.insert(pizzaVo, session);
+		session.close();
+
+		return pizzaId;
 	}
 }

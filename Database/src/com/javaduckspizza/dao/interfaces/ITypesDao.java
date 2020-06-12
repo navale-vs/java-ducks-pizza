@@ -6,7 +6,7 @@ import org.hibernate.Session;
 
 import com.javaduckspizza.vo.TypesVo;
 
-public interface ITypeDao {
+public interface ITypesDao {
 	public long insert(TypesVo tv, Session session);
 	public int update(TypesVo tv, Session session);
 	public TypesVo get(long id, Session session);
