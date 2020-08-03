@@ -12,7 +12,7 @@ import com.javaduckspizza.vo.TypesVo;
 
 public class OrdersDao implements IOrderDao {
 	private static final String HQL_UPDATE = "UPDATE OrdersVo " +
-			"SET CUSTOMER_ID = :customerId, METHOD = :method, TOTAL = :total, STATUS = :status, DATE_TIME_PLACED = :dateTimePlaced, " +
+			"SET CUSTOMER_ID = :customerId, RETRIEVAL_METHOD = :method, TOTAL = :total, STATUS = :status, DATE_TIME_PLACED = :dateTimePlaced, " +
 			"DATE_TIME_DUE = :dateTimeDue, DATE_TIME_READY = :dateTimeReady, DATE_TIME_COMPLETED = :dateTimeCompleted " +
 			"WHERE ID = :id";
 	private static final String HQL_GET_BY_ID = "FROM OrdersVo WHERE ID = :id";
@@ -64,13 +64,13 @@ public class OrdersDao implements IOrderDao {
 		Transaction txn = session.beginTransaction();
 		Query query = session.createQuery(HQL_UPDATE);
 		query.setParameter("customerId", ov.getCustomerId());
-		query.setParameter("method", ov.getMethod());
+		query.setParameter("method", ov.getRetrievalMethod());
 		query.setParameter("total", ov.getTotal());
 		query.setParameter("status", ov.getStatus());
 		query.setParameter("dateTimePlaced", ov.getDateTimePlaced());
-		query.setTimestamp("dateTimeDue", ov.getDateTimeDue());
+		query.setParameter("dateTimeDue", ov.getDateTimeDue());
 		query.setParameter("dateTimeReady", ov.getDateTimeReady());
-		query.setTimestamp("dateTimeCompleted", ov.getDateTimeCompleted());
+		query.setParameter("dateTimeCompleted", ov.getDateTimeCompleted());
 		query.setParameter("id", ov.getId());
 		int rows = query.executeUpdate();
 		txn.commit();

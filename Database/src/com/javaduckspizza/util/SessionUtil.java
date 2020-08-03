@@ -40,7 +40,7 @@ public class SessionUtil {
 		init();
 	}
 
-	//handling configuration in the code in order to avoid spending a ton of time trying to figure out where to put
+	//handling configuration in the code in order to avoid spending time trying to figure out where to put
 	//a properties file on the server.
 	private void init() {
 		Configuration configuration = new Configuration();
