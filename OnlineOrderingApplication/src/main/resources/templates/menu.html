@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Get ready for delicious!</title>
+</head>
+<body>
+	<table>
+	<tr>
+		<th>Sizes: </th>
+		<td td:each="size: ${sizes}">
+			<input type="radio">${size.description}</input>
+		</td>
+	</tr>
+	<tr>
+		<th>Crusts</th>
+		<td td:each="crust: ${crusts}">
+			<input type="radio">${crust.description}</input>
+		</td>
+	</tr>
+	<tr>
+		<th>Sauces: </th>
+		<td td:each="sauce: ${sauces}">
+			<input type="radio">${sauce.description}</input>
+		</td>
+	</tr>
+	<tr>
+		<th>Cheeses:</th>
+		<td td:each="cheese: ${cheeses}">
+			<input type="radio">${cheese.description}</input>
+		</td>
+	</tr>
+	</table>
+</body>
+</html>

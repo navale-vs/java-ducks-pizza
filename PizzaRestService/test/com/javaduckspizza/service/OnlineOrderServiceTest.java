@@ -236,4 +236,19 @@ class OnlineOrderServiceTest {
 			assertEquals(category, typesVo.getCategory());
 		}
 	}
+
+	@Test
+	void testGetTypesByCategoryAndStatus() {
+		String category = "TEST";
+		boolean active = true;
+
+		List<TypesVo> lstTypeVos = oos.getTypesByCategoryAndStatus(category, active);
+		System.out.println("lstTypeVos.size(): " + lstTypeVos.size());
+		verify(typesServiceDao, times(1)).getByCategoryAndStatus(category, active);
+
+		for (TypesVo typesVo : lstTypeVos) {
+			System.out.println("typesVo: " + typesVo);
+			assertEquals(category, typesVo.getCategory());
+		}
+	}
 }

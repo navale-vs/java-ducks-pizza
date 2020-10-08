@@ -52,6 +52,7 @@ public class OnlineOrderServiceFt {
 			onlineOrderServiceFt.getTypesById();
 			onlineOrderServiceFt.getTypesBySequenceCode();
 			onlineOrderServiceFt.getTypesByCategory();
+			onlineOrderServiceFt.getTypesByCategoryAndStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -195,6 +196,15 @@ public class OnlineOrderServiceFt {
 		final String category_code = "CHES";
 		
 		List<TypesVo> lst = oos.getTypesByCategory(category_code);
+		System.out.println("getTypesByCategory: " + ( ((lst != null) && !lst.isEmpty()) ? PASS : FAIL));
+		System.out.println("lst.size(): " + lst.size());
+	}
+
+	private void getTypesByCategoryAndStatus() throws Exception {
+		final String category_code = "CHES";
+		final boolean active = true;
+		
+		List<TypesVo> lst = oos.getTypesByCategoryAndStatus(category_code, active);
 		System.out.println("getTypesByCategory: " + ( ((lst != null) && !lst.isEmpty()) ? PASS : FAIL));
 		System.out.println("lst.size(): " + lst.size());
 	}

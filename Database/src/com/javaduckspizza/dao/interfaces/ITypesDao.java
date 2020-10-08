@@ -12,5 +12,6 @@ public interface ITypesDao {
 	public TypesVo get(long id, Session session);
 	public TypesVo getBySequenceCode(String sequenceCode, Session session);
 	public List<TypesVo> getByCategory(String category, Session session);
+	public List<TypesVo> getByCategoryStatus(String category, boolean isActive, Session session);
 	public int delete(long id, Session session);
 }

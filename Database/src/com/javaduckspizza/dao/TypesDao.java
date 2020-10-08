@@ -16,6 +16,7 @@ public class TypesDao implements ITypesDao {
 	private static final String HQL_GET_BY_ID = "FROM TypesVo WHERE ID = :id";
 	private static final String HQL_GET_BY_SEQUENCE_CODE = "FROM TypesVo WHERE SEQUENCE_CODE = :sequenceCode";
 	private static final String HQL_GET_BY_CATEGORY = "FROM TypesVo WHERE CATEGORY = :category";
+	private static final String HQL_GET_BY_CATEGORY_AND_STATUS = "FROM TypesVo WHERE CATEGORY = :category AND IS_ACTIVE = :active";
 	private static final String HQL_DELETE = "DELETE FROM TypesVo WHERE ID = :id";
 
 	public TypesDao() {
@@ -66,7 +67,7 @@ public class TypesDao implements ITypesDao {
 
 	@Override
 	public List<TypesVo> getByCategory(String category, Session session) {
-		System.out.println("In getBycategory(), using " + category);
+		System.out.println("In getByCategory(), using " + category);
 		List<TypesVo> lstTypes = null;
 		Query<TypesVo> query = session.createQuery(HQL_GET_BY_CATEGORY);
 		query.setParameter("category", category);
@@ -84,5 +85,17 @@ public class TypesDao implements ITypesDao {
 		txn.commit();
 
 		return rows;
+	}
+
+	@Override
+	public List<TypesVo> getByCategoryStatus(String category, boolean active, Session session) {
+		System.out.println("In getByCategory(), using " + category);
+		List<TypesVo> lstTypes = null;
+		Query<TypesVo> query = session.createQuery(HQL_GET_BY_CATEGORY_AND_STATUS);
+		query.setParameter("category", category);
+		query.setParameter("active", active);
+		lstTypes = query.list();
+
+		return lstTypes;
 	}
 }

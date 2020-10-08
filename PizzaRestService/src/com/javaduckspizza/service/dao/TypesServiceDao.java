@@ -2,8 +2,6 @@ package com.javaduckspizza.service.dao;
 
 import java.util.List;
 
-import javax.persistence.PersistenceException;
-
 import org.hibernate.Session;
 
 import com.javaduckspizza.dao.TypesDao;
@@ -28,9 +26,17 @@ public class TypesServiceDao {
 		return typesVo;
 	}
 
-	public List<TypesVo> getByCategory(String category) throws PersistenceException {
+	public List<TypesVo> getByCategory(String category) {
 		Session session = SessionUtil.getInstance().openSession();
 		List<TypesVo> typesVo = typesDao.getByCategory(category, session);
+		session.close();
+
+		return typesVo;
+	}
+
+	public List<TypesVo> getByCategoryAndStatus(String category, boolean active) {
+		Session session = SessionUtil.getInstance().openSession();
+		List<TypesVo> typesVo = typesDao.getByCategoryStatus(category, active, session);
 		session.close();
 
 		return typesVo;

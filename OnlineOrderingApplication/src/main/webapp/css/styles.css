@@ -1,0 +1,37 @@
+@charset "ISO-8859-1";
+
+body	{
+	background-image: url('/img/tabletop.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+#options {
+ 		background-color: #DD1100;
+		border: 15px solid #FFFFBB;
+		border-radius: 25px;
+}
+
+#options th	{
+		text-align: left;
+}
+
+#options td	{
+ 		background-color: #FFFFEE;
+		border: 1px solid #000000;
+		border-radius: 8px;
+}
+
+#options td:hover {
+	background-color: #FCBC09;
+	border: 1px solid #000000
+}
+
+#options checkbox:checked {
+	background-color: #BBBBBB;
+}
+
+.menuButton {
+	background-color: #FFFFEE;
+	border-radius:8px;
+}

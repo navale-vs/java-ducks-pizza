@@ -248,4 +248,16 @@ public class OnlineOrderService {
 		return lst;
 	}
 
+	@GET
+	@Path("/types/category/{category}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<TypesVo> getTypesByCategoryAndStatus(@PathParam(value = "category") String category,
+			@PathParam(value = "category") boolean active) {
+		Session session = SessionUtil.getInstance().openSession();
+		List<TypesVo> lst = typesServiceDao.getByCategoryAndStatus(category, active);
+		session.close();
+
+		return lst;
+	}
+
 }
