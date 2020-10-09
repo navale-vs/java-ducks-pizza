@@ -18,15 +18,17 @@
 				</tr>
 					<core:forEach var="item" items="${shoppingCart}">
 						<tr>
-							<td><input type="button" value="Remove"></td>
-	<%-- 						<td>${item.id}</td> --%>
-	<%-- 						<td>${item.price}</td> --%>
+							<td><input type="button" value="Remove" location.href="/removeItem"></td>
+							<td>${item.size}</td>
+							<td>${item.crust}</td>
+							<td>${item.sauce}</td>
+							<td>${item.cheese}</td>
 						</tr>
 					</core:forEach>
 			<tr>
 				<td><input type="button" onclick="location.href = '/menu'" value="Back to Menu"></td>
 				<td><input type="Submit" value="Place Order"></td>
-				<td><input type="button" onclick="location.href = '/'" value="Cancel"></td>
+				<td><input type="button" onclick="location.href = '/cancel'" value="Cancel"></td>
 			</tr>
 			</table>
 		</form>

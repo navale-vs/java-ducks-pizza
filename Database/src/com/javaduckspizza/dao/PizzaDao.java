@@ -119,6 +119,7 @@ public class PizzaDao implements IPizzaDao {
 		criteriaUpdate.set("status", pizzaVo.getStatus());
 		criteriaUpdate.set("price", pizzaVo.getPrice());
 		criteriaUpdate.set("id", pizzaVo.getId());
+		criteriaUpdate.set("cheese", pizzaVo.getCheese());
 
 		Query<PizzaVo> query = session.createQuery(criteriaUpdate);
 		int rows = query.executeUpdate();

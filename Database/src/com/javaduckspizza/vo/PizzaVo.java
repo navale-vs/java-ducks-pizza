@@ -37,6 +37,8 @@ public class PizzaVo implements Serializable, Comparable<PizzaVo> {
 	private Long status;
 	@Column(name="PRICE")
 	private BigDecimal price;
+	@Column(name="CHEESE")
+	private Long cheese;
 	//	@OneToMany(mappedBy = "pizza")
 	//	private Set<PizzaToppingAssociationVo> toppings;
 	@ManyToOne
@@ -101,6 +103,14 @@ public class PizzaVo implements Serializable, Comparable<PizzaVo> {
 
 	public void setPrice(BigDecimal price) {
 		this.price = price;
+	}
+
+	public Long getCheese() {
+		return cheese;
+	}
+
+	public void setCheese(Long cheese) {
+		this.cheese = cheese;
 	}
 
 	@Override

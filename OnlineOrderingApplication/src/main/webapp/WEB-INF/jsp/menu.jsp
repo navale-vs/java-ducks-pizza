@@ -12,7 +12,7 @@
 		<input type="submit" id="viewCart" value="View Cart"/>
 	</form>
 
-	<form method="POST">
+	<form method="POST" action="/addItem">
 		<table id="options">
 		<tr>
 			<th>Sizes: </th>
@@ -71,7 +71,7 @@
 			</core:forEach>		
 		</tr>
 		<tr>
-			<td><input id="addToCart" class="menuButton" type="button"  value="Add to Cart" onclick="buildPizza();" disabled></td>
+			<td><input id="addToCart" class="menuButton" type="submit"  value="Add to Cart" onclick="buildPizza();" disabled></td>
 			<td><input id="reset" class="menuButton" type="button" value="Reset" onclick="resetFields();" disabled></td>
 		</tr>
 		</table>
@@ -91,8 +91,9 @@
 // 	}
 
 	function onLoad() {
-// 		viewCart.value = ((pizzas.length > 0) ? "View Cart (" + pizzas.length + ")": "View Cart") 
+// 		viewCart.value = ((${shoppingCart.size()} > 0) ? "View Cart (" + ${shoppingCart.size()} + ")": "View Cart") 
 	}
+
 	function resetFields() {
 		resetRadioButtonsByName("size");
 		resetRadioButtonsByName("crust");
@@ -172,23 +173,24 @@
 	}
 	
 	function buildPizza() {
-		alert("building");
 		if(!validatePizza()) {//shouldn't be necessary because Add to Cart should not be available until settings are correct 
 			//specify problems
 			return;
 		}
 
-		var sizeId = getCheckedElementValues("size")[0].value;
-		var crustId = getCheckedElementValues("crust")[0].value;
-		var sauceId = getCheckedElementValues("sauce")[0].value;
-		var cheeseId = getCheckedElementValues("cheese")[0].value;
+		var size = getCheckedElementValues("size")[0];
+		var crust = getCheckedElementValues("crust")[0];
+		var sauce = getCheckedElementValues("sauce")[0];
+		var cheese = getCheckedElementValues("cheese")[0];
 		var selectedToppings = getSelectedToppings();
 
-		var pizza = {order: 0, size: sizeId, crust: crustId, sauce: sauceId, cheese: cheeseId, toppings: selectedToppings, price: 0.00};
+// 		var pizza = {order: 0, size: sizeId, crust: crustId, sauce: sauceId, cheese: cheeseId, toppings: selectedToppings, price: 0.00};
 // 		${pizzas}.add(pizza);
 // 		pizzas.push(pizza);
 // 		viewCart.value = "View Cart (" + ${pizzas}.size + ")";
-		alert("added");
+		var itemReview = "Added a " + size.id + " pizza " + " on " + crust.id + " crust with " + sauce.id + " sauce, " + cheese.id + " cheese.";
+
+		alert(itemReview);
 	}
 
 	function handleToppingCheck(id) {

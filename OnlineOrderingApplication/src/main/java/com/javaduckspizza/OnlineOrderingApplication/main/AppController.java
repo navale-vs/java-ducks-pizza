@@ -2,10 +2,8 @@ package com.javaduckspizza.OnlineOrderingApplication.main;
 
 import java.util.ArrayList;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,11 +24,7 @@ public class AppController {
 	@RequestMapping("/menu")
 	public String getMenu(Model model) {
 		System.err.println("In AppController.getMenu()");
-		model.addAttribute("sizes", TypesCache.getSizes());
-		model.addAttribute("crusts", TypesCache.getCrusts());
-		model.addAttribute("cheeses", TypesCache.getCheeses());
-		model.addAttribute("sauces", TypesCache.getSauces());
-		model.addAttribute("toppings", TypesCache.getToppings());
+		addAttributesForMenu(model);
 
 		return "/menu.";  //I probably messed up something in the configuration.  If written without / and ., it tries to get WEB-INF/jspmenujsp
 	}
@@ -48,8 +42,36 @@ public class AppController {
 	//need to add parameter for toppings later
 	public String addItem(Model model, @ModelAttribute("crust") long crust, @ModelAttribute("sauce") long sauce,
 			@ModelAttribute("size") long size, @ModelAttribute("cheese") long cheese) {
+		System.err.println("Adding item");
+		PizzaVo pizzaVo = new PizzaVo();
+		pizzaVo.setCrust(crust);
+		pizzaVo.setSauce(sauce);
+		pizzaVo.setSize(size);
+		pizzaVo.setCheese(cheese);
+		shoppingCart.add(pizzaVo);
+		model.addAttribute("shoppingCart", shoppingCart);
+		addAttributesForMenu(model);
 
 		return "/menu.";
+	}
+
+	@POST
+	@RequestMapping("/removeItem")
+	//need to add parameter for toppings later
+	public String removeItem(Model model, @ModelAttribute("crust") long crust, @ModelAttribute("sauce") long sauce,
+			@ModelAttribute("size") long size, @ModelAttribute("cheese") long cheese) {
+		System.err.println("Removing item");
+		
+		for (PizzaVo pizzaVo : shoppingCart) {
+			if((pizzaVo.getSize() == size) && (pizzaVo.getCrust() == crust) && (pizzaVo.getSauce() == sauce)) {
+				shoppingCart.remove(pizzaVo);
+			}
+		}
+
+		model.addAttribute("shoppingCart", shoppingCart);
+		addAttributesForMenu(model);
+
+		return "/cart.";
 	}
 
 	@POST
@@ -61,8 +83,18 @@ public class AppController {
 
 	@RequestMapping("/cancel")
 	public String cancelOrder(Model model) {
+		System.err.println("Canceling order");
 		shoppingCart = new ArrayList<PizzaVo>();
-		
-		return "/";
+		model.addAttribute("shoppingCart", shoppingCart);
+
+		return "redirect:/";
+	}
+
+	private void addAttributesForMenu(Model model) {
+		model.addAttribute("sizes", TypesCache.getSizes());
+		model.addAttribute("crusts", TypesCache.getCrusts());
+		model.addAttribute("cheeses", TypesCache.getCheeses());
+		model.addAttribute("sauces", TypesCache.getSauces());
+		model.addAttribute("toppings", TypesCache.getToppings());
 	}
 }
