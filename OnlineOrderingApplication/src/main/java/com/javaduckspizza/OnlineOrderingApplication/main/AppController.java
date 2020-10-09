@@ -1,6 +1,7 @@
 package com.javaduckspizza.OnlineOrderingApplication.main;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.javaduckspizza.OnlineOrderingApplication.common.TypesCache;
 import com.javaduckspizza.vo.PizzaVo;
+import com.javaduckspizza.vo.TypesVo;
 
 @Controller
 @RequestMapping("/")
@@ -90,11 +92,28 @@ public class AppController {
 		return "redirect:/";
 	}
 
-	private void addAttributesForMenu(Model model) {
+	public void addAttributesForMenu(Model model) {
 		model.addAttribute("sizes", TypesCache.getSizes());
 		model.addAttribute("crusts", TypesCache.getCrusts());
 		model.addAttribute("cheeses", TypesCache.getCheeses());
 		model.addAttribute("sauces", TypesCache.getSauces());
 		model.addAttribute("toppings", TypesCache.getToppings());
+	}
+
+	protected void buildPizzaList() {
+		//size.id + " pizza " + " on " + crust.id + " crust with " + sauce.id + " sauce, " + cheese.id + " cheese.";
+		for (PizzaVo pizzaVo : shoppingCart) {
+//			String description = 
+		}
+	}
+
+	protected String getTypeById(List<TypesVo> list, long id) {
+		for (TypesVo typesVo : list) {
+			if(typesVo.getId() == id) {
+				return typesVo.getDescription();
+			}
+		}
+
+		return "";
 	}
 }
