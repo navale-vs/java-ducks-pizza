@@ -16,13 +16,13 @@
 					<th>Description</th>
 					<th>Price</th>
 				</tr>
-					<core:forEach var="item" items="${shoppingCart}">
+					<core:forEach var="item" items="${cartForDisplay}">
 						<tr>
 							<td><input type="button" value="Remove" location.href="/removeItem"></td>
-							<td>${item.size}</td>
-							<td>${item.crust}</td>
-							<td>${item.sauce}</td>
-							<td>${item.cheese}</td>
+							<td>${item}</td>
+<%-- 							<td>${item.value}</td> --%>
+<%-- 							<td>${item.sauce}</td> --%>
+<%-- 							<td>${item.cheese}</td> --%>
 						</tr>
 					</core:forEach>
 			<tr>

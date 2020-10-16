@@ -1,7 +1,9 @@
 package com.javaduckspizza.OnlineOrderingApplication.main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,15 +14,18 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javaduckspizza.OnlineOrderingApplication.common.TypesCache;
+import com.javaduckspizza.vo.PizzaToppingAssociationVo;
 import com.javaduckspizza.vo.PizzaVo;
-import com.javaduckspizza.vo.TypesVo;
 
 @Controller
 @RequestMapping("/")
 public class AppController {
-	//needs to include sizes, toppings, crusts, cheeses, and sauces
-	private ArrayList<PizzaVo> shoppingCart = new ArrayList<PizzaVo>();
+	private Map<PizzaVo, List<PizzaToppingAssociationVo>> mapShoppingCart =
+			new HashMap<PizzaVo, List<PizzaToppingAssociationVo>>();
 
 	@GET
 	@RequestMapping("/menu")
@@ -34,27 +39,45 @@ public class AppController {
 	@RequestMapping("/cart")
 	public String viewCart(Model model) {
 		//navigate to cart and display contents of order
-		model.addAttribute("shoppingCart", shoppingCart);
+		model.addAttribute("cartForDisplay", prepareCartForDisplay());
 
 		return "/cart.";
 	}
 
-	@POST
+	//@POST
 	@RequestMapping("/addItem")
-	//need to add parameter for toppings later
 	public String addItem(Model model, @ModelAttribute("crust") long crust, @ModelAttribute("sauce") long sauce,
-			@ModelAttribute("size") long size, @ModelAttribute("cheese") long cheese) {
+			@ModelAttribute("size") long size, @ModelAttribute("cheese") long cheese,
+			@ModelAttribute("toppingsSelected") String selectedToppings) {
 		System.err.println("Adding item");
+		System.err.println("selectedToppings: " + selectedToppings);
+		ObjectMapper mapper = new ObjectMapper();
+
 		PizzaVo pizzaVo = new PizzaVo();
 		pizzaVo.setCrust(crust);
 		pizzaVo.setSauce(sauce);
 		pizzaVo.setSize(size);
 		pizzaVo.setCheese(cheese);
-		shoppingCart.add(pizzaVo);
-		model.addAttribute("shoppingCart", shoppingCart);
-		addAttributesForMenu(model);
 
-		return "/menu.";
+		try {
+			List<PizzaToppingAssociationVo> lstPtav = mapper.readValue(selectedToppings,
+					mapper.getTypeFactory().constructCollectionType(java.util.List.class, PizzaToppingAssociationVo.class));
+			mapShoppingCart.put(pizzaVo, lstPtav);
+			model.addAttribute("mapShoppingCart", mapShoppingCart);
+			model.addAttribute("itemCount", mapShoppingCart.size());
+			System.out.println("mapShoppingCart.size(): " + mapShoppingCart.size());
+//			for (PizzaToppingAssociationVo ptav : lstPtav) {
+//				System.err.println(ptav.toString());
+//			}
+		} catch (JsonMappingException e1) {
+			e1.printStackTrace();
+		} catch (JsonProcessingException e1) {
+			e1.printStackTrace();
+		}
+
+//		addToCart();
+
+		return getMenu(model); //I don't know if this is good design, but it works. 
 	}
 
 	@POST
@@ -64,13 +87,13 @@ public class AppController {
 			@ModelAttribute("size") long size, @ModelAttribute("cheese") long cheese) {
 		System.err.println("Removing item");
 		
-		for (PizzaVo pizzaVo : shoppingCart) {
+		for (PizzaVo pizzaVo : mapShoppingCart.keySet()) {
 			if((pizzaVo.getSize() == size) && (pizzaVo.getCrust() == crust) && (pizzaVo.getSauce() == sauce)) {
-				shoppingCart.remove(pizzaVo);
+				mapShoppingCart.remove(pizzaVo);
 			}
 		}
 
-		model.addAttribute("shoppingCart", shoppingCart);
+		model.addAttribute("cartForDisplay", prepareCartForDisplay());
 		addAttributesForMenu(model);
 
 		return "/cart.";
@@ -86,34 +109,48 @@ public class AppController {
 	@RequestMapping("/cancel")
 	public String cancelOrder(Model model) {
 		System.err.println("Canceling order");
-		shoppingCart = new ArrayList<PizzaVo>();
-		model.addAttribute("shoppingCart", shoppingCart);
+		mapShoppingCart = new HashMap<PizzaVo, List<PizzaToppingAssociationVo>>();
+		model.addAttribute("mapShoppingCart", mapShoppingCart);
 
 		return "redirect:/";
 	}
 
 	public void addAttributesForMenu(Model model) {
-		model.addAttribute("sizes", TypesCache.getSizes());
-		model.addAttribute("crusts", TypesCache.getCrusts());
-		model.addAttribute("cheeses", TypesCache.getCheeses());
-		model.addAttribute("sauces", TypesCache.getSauces());
-		model.addAttribute("toppings", TypesCache.getToppings());
+		model.addAttribute("sizes", TypesCache.getActiveTypesByCategory("SIZE"));
+		model.addAttribute("crusts", TypesCache.getActiveTypesByCategory("CRST"));
+		model.addAttribute("cheeses", TypesCache.getActiveTypesByCategory("CHES"));
+		model.addAttribute("sauces", TypesCache.getActiveTypesByCategory("SAUC"));
+		model.addAttribute("toppings", TypesCache.getActiveTypesByCategory("TOPP"));
 	}
 
-	protected void buildPizzaList() {
-		//size.id + " pizza " + " on " + crust.id + " crust with " + sauce.id + " sauce, " + cheese.id + " cheese.";
-		for (PizzaVo pizzaVo : shoppingCart) {
-//			String description = 
-		}
-	}
+	protected List<String> prepareCartForDisplay() {
+		List<String> lstDescriptions = new ArrayList<String>();
 
-	protected String getTypeById(List<TypesVo> list, long id) {
-		for (TypesVo typesVo : list) {
-			if(typesVo.getId() == id) {
-				return typesVo.getDescription();
+		for (PizzaVo pizzaVo : mapShoppingCart.keySet()) {
+			StringBuffer sbPizzaDescription = new StringBuffer();
+			sbPizzaDescription.append(TypesCache.getById(pizzaVo.getSize()).getDescription());
+			sbPizzaDescription.append(" ");
+			sbPizzaDescription.append(TypesCache.getById(pizzaVo.getCrust()).getDescription());
+			sbPizzaDescription.append(" crust, with ");
+			sbPizzaDescription.append(TypesCache.getById(pizzaVo.getSauce()).getDescription());
+			sbPizzaDescription.append(" sauce, ");
+			sbPizzaDescription.append(TypesCache.getById(pizzaVo.getCheese()).getDescription());
+			sbPizzaDescription.append(" cheese");
+
+			List<PizzaToppingAssociationVo> lstToppings = mapShoppingCart.get(pizzaVo);
+
+			if(!lstToppings.isEmpty()) {
+				sbPizzaDescription.append(", and\n");
+
+				for (PizzaToppingAssociationVo ptav : lstToppings) {
+					sbPizzaDescription.append(TypesCache.getById(ptav.getToppingsId()).getDescription());
+					sbPizzaDescription.append(", ");
+				}
 			}
+
+			lstDescriptions.add(sbPizzaDescription.toString());
 		}
 
-		return "";
+		return lstDescriptions;
 	}
 }

@@ -1,18 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="core" %>   
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="core" %>
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<link rel="stylesheet" href="/css/styles.css"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>Get ready for delicious!</title>
 </head>
-<body onload="onLoad()">
-	<form action="/cart">
-		<input type="submit" id="viewCart" value="View Cart"/>
-	</form>
-
+<body onload="setViewCartLabel(${itemCount});">
 	<form method="POST" action="/addItem">
+		<input type="hidden" id="toppingsSelected" name="toppingsSelected" value="" />
 		<table id="options">
 		<tr>
 			<th>Sizes: </th>
@@ -58,8 +55,8 @@
 			<th>Toppings:</th>
 			<core:forEach var="topping" items="${toppings}">
 				<tr>
-					<td><input class="toppings" type="checkbox" id="${topping.description}"
-						value="${topping.id }" onclick="handleToppingCheck(this.id); disableReset(false);"/>
+					<td><input class="toppings" type="checkbox" id="${topping.description}" name="toppings"
+						value="${topping.id}" onclick="handleToppingCheck(this.id); disableReset(false);"/>
 						<label for="${topping.description}">${topping.description}</label></td>
 					<td><input class="leftSide" type="checkbox" id="${topping.description}Left" name="${topping.description}"
 						onclick="handleSideClick(this.name);" />
@@ -71,16 +68,15 @@
 			</core:forEach>		
 		</tr>
 		<tr>
-			<td><input id="addToCart" class="menuButton" type="submit"  value="Add to Cart" onclick="buildPizza();" disabled></td>
+			<td><input id="addToCart" class="menuButton" type="submit" value="Add to Cart" onclick="buildPizza();" disabled></td>
 			<td><input id="reset" class="menuButton" type="button" value="Reset" onclick="resetFields();" disabled></td>
+			<td><input id="viewCart" class="menuButton" type="button" value="View Cart" onclick="location.href = '/cart'" /></td>
 		</tr>
 		</table>
 	</form>
 </body>
 
 <script type="text/javascript"> //will move this all to its own file later
-// 	var pizzas = [];
-	
 // 	function allowGlutenFree(id) {
 // 		if((id == 'SIZE_0001') || (id == 'SIZE_0002')) {
 // 			document.getElementById('CRST_0004').disabled = false;
@@ -90,9 +86,10 @@
 // 		}
 // 	}
 
-	function onLoad() {
-// 		viewCart.value = ((${shoppingCart.size()} > 0) ? "View Cart (" + ${shoppingCart.size()} + ")": "View Cart") 
-	}
+	function setViewCartLabel(itemCount) {
+		console.log("itemCount: " + itemCount);
+		document.getElementById("viewCart").value = ((itemCount) ? "View Cart (" + itemCount + ")" : "View Cart");
+	} 
 
 	function resetFields() {
 		resetRadioButtonsByName("size");
@@ -104,7 +101,7 @@
 		enableAddToCart();
 	}
 
-	function getCheckedElementValues(name) {
+	function getCheckedElements(name) {
 		var elemArray = document.getElementsByName(name);
 		var checkedArray = [];
 
@@ -124,8 +121,10 @@
 		for(let i = 0; i < toppingsArray.length; i++) {
 			if(toppingsArray[i].checked) {
 				let sides = document.getElementsByName(toppingsArray[i].id);
-				var topping = {id: toppingsArray[i].value, left: sides[0].checked, right: sides[1].checked};
-				selectedToppings.push(topping);
+				var topping = {toppingsId: toppingsArray[i].value, left: sides[0].checked, right: sides[1].checked};
+				console.log(JSON.stringify(topping));
+				console.log(topping.toppingsId + " " + topping.left + " " + topping.right);
+				selectedToppings.push(JSON.stringify(topping));
 			}
 		}
 
@@ -159,11 +158,10 @@
 	}
 
 	function validatePizza() {
-		var sizeId = getCheckedElementValues("size")[0];
-		var crustId = getCheckedElementValues("crust")[0];
-		var sauceId = getCheckedElementValues("sauce")[0];
-		var cheeseId = getCheckedElementValues("cheese")[0];
-		var selectedToppings = getSelectedToppings();
+		var sizeId = getCheckedElements("size")[0];
+		var crustId = getCheckedElements("crust")[0];
+		var sauceId = getCheckedElements("sauce")[0];
+		var cheeseId = getCheckedElements("cheese")[0];
 
 		if((sizeId == undefined) || (crustId == undefined) || (sauceId == undefined) || (cheeseId == undefined)) {
 			return false;
@@ -171,24 +169,17 @@
 			return true;
 		}
 	}
-	
+
 	function buildPizza() {
-		if(!validatePizza()) {//shouldn't be necessary because Add to Cart should not be available until settings are correct 
-			//specify problems
-			return;
-		}
+		var size = getCheckedElements("size")[0];
+		var crust = getCheckedElements("crust")[0];
+		var sauce = getCheckedElements("sauce")[0];
+		var cheese = getCheckedElements("cheese")[0];
+		document.getElementById("toppingsSelected").value = "[" + getSelectedToppings() + "]";
 
-		var size = getCheckedElementValues("size")[0];
-		var crust = getCheckedElementValues("crust")[0];
-		var sauce = getCheckedElementValues("sauce")[0];
-		var cheese = getCheckedElementValues("cheese")[0];
-		var selectedToppings = getSelectedToppings();
-
-// 		var pizza = {order: 0, size: sizeId, crust: crustId, sauce: sauceId, cheese: cheeseId, toppings: selectedToppings, price: 0.00};
-// 		${pizzas}.add(pizza);
-// 		pizzas.push(pizza);
-// 		viewCart.value = "View Cart (" + ${pizzas}.size + ")";
-		var itemReview = "Added a " + size.id + " pizza " + " on " + crust.id + " crust with " + sauce.id + " sauce, " + cheese.id + " cheese.";
+		console.log("toppingsSelected: " + document.getElementById("toppingsSelected"));
+		var itemReview = "Added a " + size.id + " pizza on " + crust.id + " crust with " + sauce.id + " sauce, " +
+			cheese.id + " cheese.\n" + document.getElementById("toppingsSelected").value;
 
 		alert(itemReview);
 	}
@@ -210,10 +201,6 @@
 		} else {
 			document.getElementById(name).checked = true;
 		}
-	}
-
-	function addPizza() {
-		alert("Confirm order"); //should show message with settings for the pizza user is adding
 	}
 </script>
 </html>

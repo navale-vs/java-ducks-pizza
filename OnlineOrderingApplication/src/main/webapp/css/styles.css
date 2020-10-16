@@ -6,6 +6,12 @@ body	{
 	background-size: cover;
 }
 
+#startingPoint {
+		background-color: #FFFFEE;
+		border: 15px solid #FFFFBB;
+		border-radius: 25px;
+}
+
 #options {
  		background-color: #DD1100;
 		border: 15px solid #FFFFBB;
