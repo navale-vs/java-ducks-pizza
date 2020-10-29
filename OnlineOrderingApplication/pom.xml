@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>OnlineOrderingApplication</name>
-	<description>Online ordering application for Javaducks Pizza</description>
+	<description>Online ordering application for Java Ducks Pizza</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -49,10 +49,23 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
-		</dependency><dependency>
+		</dependency>
+		<dependency>
 		    <groupId>org.mockito</groupId>
-		    <artifactId>mockito-all</artifactId>
-		    <version>2.0.2-beta</version>
+		    <artifactId>mockito-core</artifactId>
+		    <version>3.5.15</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-inline</artifactId>
+		    <version>3.5.15</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-junit-jupiter</artifactId>
+		    <version>3.5.15</version>
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
@@ -67,10 +80,16 @@
 		    <version>2.1.6</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.powermock</groupId>
-		    <artifactId>powermock-module-junit4</artifactId>
-		    <version>2.0.7</version>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter-api</artifactId>
+		    <version>5.7.0</version>
 		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -79,7 +98,11 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>2.22.2</version>
+		    </plugin>
 		</plugins>
 	</build>
-
 </project>

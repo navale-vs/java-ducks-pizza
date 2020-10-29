@@ -97,12 +97,13 @@ public class ModifierDao implements IModifiersDao {
 	}
 
 //	@Override
-	public List<ModifierVo> getCurrentByType(long typeId, Session session) {
+	public ModifierVo getCurrentByType(long typeId, Session session) {
 		Transaction txn = session.beginTransaction();
 		Query<ModifierVo> query = session.createQuery(HQL_GET_BY_TYPE_WHERE_NOT_EXPIRED);
 		query.setParameter("typeId", typeId);
 		List<ModifierVo> lstModifiers = query.list();
 		txn.commit();
-		return lstModifiers;
+		
+		return (((lstModifiers == null) || lstModifiers.isEmpty()) ? null : lstModifiers.get(0));
 	}
 }

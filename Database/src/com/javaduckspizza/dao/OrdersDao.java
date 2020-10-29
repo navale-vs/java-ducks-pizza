@@ -6,11 +6,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import com.javaduckspizza.dao.interfaces.IOrderDao;
+import com.javaduckspizza.dao.interfaces.IOrdersDao;
 import com.javaduckspizza.vo.OrdersVo;
 import com.javaduckspizza.vo.TypesVo;
 
-public class OrdersDao implements IOrderDao {
+public class OrdersDao implements IOrdersDao {
 	private static final String HQL_UPDATE = "UPDATE OrdersVo " +
 			"SET CUSTOMER_ID = :customerId, RETRIEVAL_METHOD = :method, TOTAL = :total, STATUS = :status, DATE_TIME_PLACED = :dateTimePlaced, " +
 			"DATE_TIME_DUE = :dateTimeDue, DATE_TIME_READY = :dateTimeReady, DATE_TIME_COMPLETED = :dateTimeCompleted " +

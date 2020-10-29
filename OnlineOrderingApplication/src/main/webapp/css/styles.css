@@ -7,9 +7,11 @@ body	{
 }
 
 #startingPoint {
-		background-color: #FFFFEE;
-		border: 15px solid #FFFFBB;
-		border-radius: 25px;
+		background-color: #DDDDDD;
+		border: 15px solid #AAAAAA;
+		border-radius: 15px;
+		padding-left: 5px;
+		padding-right: 5px;
 }
 
 #options {
@@ -33,11 +35,64 @@ body	{
 	border: 1px solid #000000
 }
 
-#options checkbox:checked {
+#options td:checked {
 	background-color: #BBBBBB;
 }
 
 .menuButton {
 	background-color: #FFFFEE;
 	border-radius:8px;
+}
+
+#cart {
+ 		background-color: #DD1100;
+		border: 15px solid #FFFFBB;
+		border-radius: 25px;
+}
+
+#cart th	{
+		text-align: left;
+}
+
+#cart td	{
+ 		background-color: #FFFFEE;
+		border: 1px solid #000000;
+		border-radius: 8px;
+}
+
+.garbage	{
+ 		background-color: #FCBC09;
+		border: 1px solid #000000;
+		border-radius: 8px;
+}
+
+#cart td:checked {
+	background-color: #BBBBBB;
+}
+
+.cartButton {
+	background-color: #FFFFEE;
+	border-radius:8px;
+}
+
+.removeButton img {
+	border: 1px solid #000000;
+	border-radius: 8px;
+	horizontal-align: center;
+	vertical-align: center;
+}
+
+.removeButton:hover {
+	box-shadow: 0 0 1px 1px #000000;
+	border-radius: 8px;
+}
+
+.removeButton:active {
+	box-shadow: 0 0 2px 2px #000000;
+	border-radius: 8px;
+}
+
+.price {
+	text-align: right;
+	vertical-align: center;
 }

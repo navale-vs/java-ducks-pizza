@@ -8,7 +8,7 @@
 	<title>Get ready for delicious!</title>
 </head>
 <body onload="setViewCartLabel(${itemCount});">
-	<form method="POST" action="/addItem">
+	<form method="POST" action="/additem">
 		<input type="hidden" id="toppingsSelected" name="toppingsSelected" value="" />
 		<table id="options">
 		<tr>
@@ -55,7 +55,7 @@
 			<th>Toppings:</th>
 			<core:forEach var="topping" items="${toppings}">
 				<tr>
-					<td><input class="toppings" type="checkbox" id="${topping.description}" name="toppings"
+					<td><input class="toppings" type="checkbox" id="${topping.description}" name="${topping.id}"
 						value="${topping.id}" onclick="handleToppingCheck(this.id); disableReset(false);"/>
 						<label for="${topping.description}">${topping.description}</label></td>
 					<td><input class="leftSide" type="checkbox" id="${topping.description}Left" name="${topping.description}"
@@ -131,6 +131,28 @@
 		return selectedToppings;
 	}
 
+	function getSelectedToppingsForDisplay() {
+		var toppingsArray = document.getElementsByClassName("toppings");
+		var selectedToppings = "";
+
+		for(let i = 0; i < toppingsArray.length; i++) {
+			if(toppingsArray[i].checked) {
+				let sides = document.getElementsByName(toppingsArray[i].id);
+				selectedToppings += toppingsArray[i].id;
+
+				if(sides[0].checked && !sides[1].checked) {
+					selectedToppings += ": Left Side Only";
+				} else if(!sides[0].checked && sides[1].checked) {
+					selectedToppings += ": Right Side Only";
+				}
+
+				selectedToppings += "\n";
+			}
+		}
+
+		return selectedToppings;
+	}
+
 	function resetRadioButtonsByName(name) {
 		var elementArray = document.getElementsByName(name);
 
@@ -178,8 +200,9 @@
 		document.getElementById("toppingsSelected").value = "[" + getSelectedToppings() + "]";
 
 		console.log("toppingsSelected: " + document.getElementById("toppingsSelected"));
+
 		var itemReview = "Added a " + size.id + " pizza on " + crust.id + " crust with " + sauce.id + " sauce, " +
-			cheese.id + " cheese.\n" + document.getElementById("toppingsSelected").value;
+			cheese.id + " cheese\n" + getSelectedToppingsForDisplay();
 
 		alert(itemReview);
 	}

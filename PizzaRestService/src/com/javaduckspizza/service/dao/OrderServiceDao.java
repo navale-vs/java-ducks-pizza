@@ -5,11 +5,12 @@ import java.util.List;
 import org.hibernate.Session;
 
 import com.javaduckspizza.dao.OrdersDao;
+import com.javaduckspizza.dao.interfaces.IOrdersDao;
 import com.javaduckspizza.util.SessionUtil;
 import com.javaduckspizza.vo.OrdersVo;
 
 public class OrderServiceDao {
-	private OrdersDao orderDao = new OrdersDao();
+	private IOrdersDao orderDao = new OrdersDao();
 
 	public long addOrder(OrdersVo orderVo) {
 		Session session = SessionUtil.getInstance().openSession();

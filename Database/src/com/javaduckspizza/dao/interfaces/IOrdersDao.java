@@ -6,7 +6,7 @@ import org.hibernate.Session;
 
 import com.javaduckspizza.vo.OrdersVo;
 
-public interface IOrderDao {
+public interface IOrdersDao {
 	public long insert(OrdersVo ov, Session session);
 	public OrdersVo get(long id, Session session);
 	public List<OrdersVo> getByCustomerId(long customerId, Session session);
