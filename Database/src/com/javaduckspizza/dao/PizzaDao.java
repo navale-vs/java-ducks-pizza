@@ -8,8 +8,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 
 import com.javaduckspizza.dao.interfaces.IPizzaDao;
@@ -63,10 +66,11 @@ public class PizzaDao implements IPizzaDao {
 		Transaction txn = session.beginTransaction();
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 		CriteriaQuery<PizzaVo> criteriaQuery = criteriaBuilder.createQuery(PizzaVo.class);
+
 		Root<PizzaVo> root = criteriaQuery.from(PizzaVo.class);
+		criteriaQuery.where(criteriaBuilder.equal(root.get("orderId"), orderId));
 		Query<PizzaVo> query = session.createQuery(criteriaQuery);
 
-		criteriaQuery.where(criteriaBuilder.equal(root.get("orderId"), orderId));
 		List<PizzaVo> lstPizzas = query.list();
 		txn.commit();
 

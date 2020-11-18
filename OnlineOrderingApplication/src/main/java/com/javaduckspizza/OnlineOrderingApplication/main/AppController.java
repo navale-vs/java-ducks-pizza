@@ -1,14 +1,16 @@
 package com.javaduckspizza.OnlineOrderingApplication.main;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 
@@ -21,24 +23,41 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javaduckspizza.OnlineOrderingApplication.common.TypesCache;
-import com.javaduckspizza.service.dao.ModifierServiceDao;
+import com.javaduckspizza.service.OnlineOrderService;
+import com.javaduckspizza.service.dao.CustomerServiceDao;
+//import com.javaduckspizza.service.dao.ModifierServiceDao;
 import com.javaduckspizza.service.dao.OrderServiceDao;
 import com.javaduckspizza.service.dao.PizzaServiceDao;
+import com.javaduckspizza.vo.CustomerVo;
 import com.javaduckspizza.vo.ModifierVo;
 import com.javaduckspizza.vo.OrdersVo;
 import com.javaduckspizza.vo.PizzaToppingAssociationVo;
 import com.javaduckspizza.vo.PizzaVo;
-import com.javaduckspizza.vo.TypesVo;
 
 @Controller
 @RequestMapping("/")
 public class AppController {
 	protected Map<PizzaVo, List<PizzaToppingAssociationVo>> mapShoppingCart =
 			new HashMap<PizzaVo, List<PizzaToppingAssociationVo>>();
+	protected Map<PizzaVo, List<PizzaToppingAssociationVo>> mapOrderHistory =
+			new HashMap<PizzaVo, List<PizzaToppingAssociationVo>>();
+	protected OnlineOrderService onlineOrderService = new OnlineOrderService();
+
+	public AppController() {
+		initCache();
+	}
+
+	protected void initCache() {
+		TypesCache.getActiveTypesByCategory(onlineOrderService, "SIZE");
+		TypesCache.getActiveTypesByCategory(onlineOrderService, "CRST");
+		TypesCache.getActiveTypesByCategory(onlineOrderService, "SAUC");
+		TypesCache.getActiveTypesByCategory(onlineOrderService, "CHES");
+		TypesCache.getActiveTypesByCategory(onlineOrderService, "TOPP");
+	}
 
 	@GET
 	@RequestMapping("/menu")
-	public String getMenu(Model model) {
+	public String getMenu(Model model, HttpServletResponse response) {
 		System.err.println("In AppController.getMenu()");
 		addAttributesForMenu(model);
 		model.addAttribute("itemCount", mapShoppingCart.size());
@@ -46,38 +65,97 @@ public class AppController {
 		return "/menu.";  //I probably messed up something in the configuration.  If written without / and ., it tries to get WEB-INF/jspmenujsp
 	}
 
+	@GET
+	@RequestMapping("/orderstatus")
+	public String orderStatus(Model model) {
+//		OrderServiceDao osd = new OrderServiceDao();
+//
+//		if (orderNumber != null) {
+//			OrdersVo ordersVo = osd.getById(orderNumber);
+//			
+//		} else if (email != null) {
+//
+//		}
+
+		return "/orderstatus.";
+	}
+
+	@GET
+	@RequestMapping("/lookupOrder")
+	public String lookupOrder(Model model, @ModelAttribute("byOrderNumber") String orderNumber) {
+		System.err.println("Looking up order: " + orderNumber);
+//		OrderServiceDao osd = new OrderServiceDao();
+		PizzaServiceDao psd = new PizzaServiceDao();
+		OrdersVo ordersVo = new OrdersVo();
+		mapOrderHistory.clear();
+
+		if ((orderNumber != null) && !orderNumber.isEmpty()) {
+			Long orderId = Long.valueOf(orderNumber);
+			ordersVo = new OrderServiceDao().getById(orderId);
+
+			if(ordersVo == null) {
+				model.addAttribute("noOrder", "No order found for " + orderNumber);
+				return "/orderstatus.";
+			}
+
+			List<PizzaVo> lstPizzasForOrder = psd.getByOrderId(orderId);
+			System.err.println(lstPizzasForOrder.size() + " pizzas for order " + orderId);
+
+			for (PizzaVo pizzaVo : lstPizzasForOrder) {
+				System.err.println("Toppings for pizzaId: " + pizzaVo.getId());
+				List<PizzaToppingAssociationVo> lstPtav = psd.getByPizza(pizzaVo.getId());
+				mapOrderHistory.put(pizzaVo, lstPtav);
+			}
+		}
+
+		Map<PizzaVo, String> cartForDisplay = prepareCartForDisplay(mapOrderHistory);
+		model.addAttribute("cartForDisplay", cartForDisplay);
+		model.addAttribute("total", calculateTotal(cartForDisplay.keySet()));
+		model.addAttribute("orderStatus", TypesCache.getById(onlineOrderService, ordersVo.getStatus()).getDescription());
+
+		return "/orderstatus.";
+	}
+
+	@RequestMapping("/history")
+	public String showHistory() {
+		return "redirect:/stillCooking";
+	}
+
+	@RequestMapping("/stillCooking")
+	public String stillCooking() {
+		return "/stillCooking.";
+	}
+
 	@RequestMapping("/cart")
 	public String viewCart(Model model) {
 		//navigate to cart and display contents of order
-		Map<PizzaVo, String> cartForDisplay = prepareCartForDisplay();
+		Map<PizzaVo, String> cartForDisplay = prepareCartForDisplay(mapShoppingCart);
 		model.addAttribute("cartForDisplay", cartForDisplay);
 		model.addAttribute("total", calculateTotal(cartForDisplay.keySet()));
 
 		return "/cart.";
 	}
 
-	//@POST
-	@RequestMapping("/additem")
+	@POST
+	@RequestMapping("/addItem")
 	public String addItem(Model model, @ModelAttribute("crust") long crust, @ModelAttribute("sauce") long sauce,
 			@ModelAttribute("size") long size, @ModelAttribute("cheese") long cheese,
 			@ModelAttribute("toppingsSelected") String selectedToppings) {
 		System.err.println("Adding item");
 		System.err.println("selectedToppings: " + selectedToppings);
-		ObjectMapper mapper = new ObjectMapper();
 
 		PizzaVo pizzaVo = new PizzaVo();
-		pizzaVo.setId(System.currentTimeMillis()); //allows for multiple pizzas with same settings.  ID will not be propagated to DB on insert.
+		pizzaVo.setId(System.currentTimeMillis()); //allows for multiple pizzas with same settings.  This ID will not be propagated to DB on insert.
 		pizzaVo.setCrust(crust);
 		pizzaVo.setSauce(sauce);
 		pizzaVo.setSize(size);
 		pizzaVo.setCheese(cheese);
-//		pizzaVo.setStatus(TypesCache.getBySequenceCode("PZST_0001").getId());
 
 		try {
+			ObjectMapper mapper = new ObjectMapper();
 			List<PizzaToppingAssociationVo> lstPtav = mapper.readValue(selectedToppings,
 					mapper.getTypeFactory().constructCollectionType(java.util.List.class, PizzaToppingAssociationVo.class));
 			mapShoppingCart.put(pizzaVo, lstPtav);
-			model.addAttribute("mapShoppingCart", mapShoppingCart);
 			model.addAttribute("itemCount", mapShoppingCart.size());
 			System.out.println("mapShoppingCart.size(): " + mapShoppingCart.size());
 		} catch (JsonMappingException e1) {
@@ -86,7 +164,7 @@ public class AppController {
 			e1.printStackTrace();
 		}
 
-		return getMenu(model); //I don't know if this is good design, but it works. 
+		return "redirect:/menu"; 
 	}
 
 	@POST
@@ -95,59 +173,146 @@ public class AppController {
 	public String removeItem(Model model, @ModelAttribute("itemsToDelete") String itemsToDelete) {
 		System.err.println("Removing item");
 		System.err.println("itemsToDelete: " + itemsToDelete);
-		removePizzas(itemsToDelete);
+		removePizzasFromOrder(itemsToDelete);
 
-		Map<PizzaVo, String> cartForDisplay = prepareCartForDisplay();
+		Map<PizzaVo, String> cartForDisplay = prepareCartForDisplay(mapOrderHistory);
 		model.addAttribute("cartForDisplay", cartForDisplay);
 		model.addAttribute("total", calculateTotal(cartForDisplay.keySet()));
 
 		return "/cart.";
 	}
 
-	private void removePizzas(String itemsToDelete) {
-		String [] array = itemsToDelete.split(",");
-		for (int i = 0; i < array.length; i++) {
-			for (PizzaVo pizzaVo : mapShoppingCart.keySet()) {
-				if(Long.valueOf(array[i]).equals(pizzaVo.getId())) {
-					mapShoppingCart.remove(pizzaVo);
+	private void removePizzasFromOrder(String itemsToDelete) {
+		if((itemsToDelete.length() > 0) && !itemsToDelete.matches("\\s")) {
+			List<PizzaVo> lstPizzasToDelete = null;
+
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				lstPizzasToDelete = mapper.readValue(itemsToDelete, mapper.getTypeFactory().
+						constructCollectionType(List.class, PizzaVo.class));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+
+			for (PizzaVo pvFromJson : lstPizzasToDelete) {
+				for (Iterator<PizzaVo> iter = mapShoppingCart.keySet().iterator(); iter.hasNext();) {
+					PizzaVo pizzaVo = iter.next();
+
+					if(Long.valueOf(pvFromJson.getId()).equals(pizzaVo.getId())) {
+						iter.remove();
+					}
 				}
 			}
 		}
 	}
 
 	@POST
-	@RequestMapping("/addorder")
-	public String addOrder(Model model, @ModelAttribute("itemsToDelete") String itemsToDelete) {
-		//Remove pizzas that should be deleted
-		System.out.println("itemsToDelete: " + itemsToDelete);
-		removePizzas(itemsToDelete);
+	@RequestMapping("/addCustomer")
+	//need to add parameter for toppings later
+	public String addCustomer(Model model, @ModelAttribute("firstName_newCustomer") String firstName,
+			@ModelAttribute("lastName_newCustomer") String lastName, @ModelAttribute("address1_newCustomer") String address1,
+			@ModelAttribute("address2_newCustomer") String address2, @ModelAttribute("city_newCustomer") String city,
+			/*@ModelAttribute("state_newCustomer") int state,*/ @ModelAttribute("zip_newCustomer") String zipcode,
+			@ModelAttribute("phone_newCustomer") String phone, @ModelAttribute("email_newCustomer") String email,
+			@ModelAttribute("password_newCustomer") String password, HttpServletResponse response) {
+		System.err.println("Enter customer information");
 
+//		CustomerServiceDao csd = new CustomerServiceDao();
+		CustomerVo customerVo = onlineOrderService.getCustomerByEmail(email);
+
+		if(customerVo == null) {
+			model.addAttribute("email", email);
+
+			customerVo = new CustomerVo();
+			customerVo.setFirstName(firstName);
+			customerVo.setLastName(lastName);
+			customerVo.setStreetAddress1(address1);
+			customerVo.setStreetAddress2(address2);
+			customerVo.setCity(city);
+			customerVo.setState(TypesCache.getBySequenceCode(onlineOrderService, "STAT_0015").getId());
+			customerVo.setZipcode5(zipcode);
+//			customerVo.setZipcode4(zipcode4);
+			customerVo.setPhone(phone.replaceAll("\\D", ""));
+			customerVo.setEmail(email);
+	
+//			customerVo.setId(csd.addCustomer(customerVo));
+			customerVo.setId(onlineOrderService.addCustomer(firstName, "", lastName, address1, address2, city, zipcode, "0000",
+					phone, TypesCache.getBySequenceCode(onlineOrderService, "STAT_0015").getId(), email, response));
+		}
+
+		/**
+		 * LoginVo lv = new LoginVo();
+		 * lv.setCustomerId(customerVo.getId());
+		 * lv.setPassword(password);
+		 */
+
+		Map<PizzaVo, String> cartForDisplay = prepareCartForDisplay(mapShoppingCart);
+		model.addAttribute("cartForDisplay", cartForDisplay);
+		model.addAttribute("total", calculateTotal(cartForDisplay.keySet()));
+		Long orderId = addOrder(customerVo.getId(), response);
+		model.addAttribute("orderId", orderId);
+
+		return ((orderId > 0L) ? "/checkout." : "/addCustomer.");
+	}
+
+	public Long addOrder(Long customerId, HttpServletResponse response) {
+		//Remove pizzas that should be deleted
+//		System.err.println("itemsToDelete: " + itemsToDelete);
+//		removePizzasFromOrder(itemsToDelete);
 		//use OrdersServiceDao to add order, will likely need Pizza, PizzaToppingAssociation  as well
+		OrdersVo ordersVo = saveOrder(customerId, response);
+		savePizza(ordersVo.getId());
+		System.err.println("order added, going to checkout");
+//		model.addAttribute("orderNumber", ordersVo.getId());
+//		model.addAttribute("cartForDisplay", prepareCartForDisplay());
+//		model.addAttribute("total", ordersVo.getTotal());
+
+		return ordersVo.getId();
+	}
+
+	private OrdersVo saveOrder(Long customerId, HttpServletResponse response) {
 		OrdersVo ordersVo = new OrdersVo();
+		ordersVo.setCustomerId(customerId);
 		ordersVo.setDateTimePlaced(new Timestamp(System.currentTimeMillis()));
-		ordersVo.setStatus(TypesCache.getBySequenceCode("ORST_0001").getId());
+		ordersVo.setStatus(TypesCache.getBySequenceCode(onlineOrderService, "ORST_0001").getId());
 		ordersVo.setDateTimeDue(addToDate(ordersVo.getDateTimePlaced(), 30));
-		ordersVo.setRetrievalMethod(TypesCache.getBySequenceCode("RTRV_0001").getId());
+		ordersVo.setRetrievalMethod(TypesCache.getBySequenceCode(onlineOrderService, "RTRV_0001").getId());
 		ordersVo.setTotal(calculateTotal(mapShoppingCart.keySet()));
 
+		System.err.println("adding orders record: " + ordersVo);
 		//Add order
-		OrderServiceDao osd = new OrderServiceDao();
-		osd.addOrder(ordersVo);
+//		OrderServiceDao osd = new OrderServiceDao();
+		/*
+		 * long customerId, @FormParam("retrievalMethod") long retrievalMethod,
+			@FormParam("total") BigDecimal total, @FormParam("status") long status, @FormParam("dateTimePlaced") Timestamp dateTimePlaced,
+			@FormParam("dateTimeDue") Timestamp dateTimeDue, @FormParam("dateTimeReady") Timestamp dateTimeReady,
+			@FormParam("dateTimeCompleted") Timestamp dateTimeCompleted, @Context HttpServletResponse response
+		 */
+		long orderId = onlineOrderService.addOrder(customerId, TypesCache.getBySequenceCode(onlineOrderService, "RTRV_0001").getId(),
+				ordersVo.getTotal(), ordersVo.getStatus(), ordersVo.getDateTimePlaced(), ordersVo.getDateTimeDue(),
+				ordersVo.getDateTimeReady(), ordersVo.getDateTimeCompleted(), response);
+		ordersVo.setId(orderId);
 
+		return ordersVo;
+	}
+
+	private void savePizza(Long ordersId) {
 		//Add Pizzas
 		PizzaServiceDao psd = new PizzaServiceDao();
-		Long pizzSubmittedStatus = TypesCache.getBySequenceCode("PZST_0001").getId();
+		Long pizzaSubmittedStatus = TypesCache.getBySequenceCode(onlineOrderService, "PZST_0001").getId();
 
 		for (PizzaVo pizzaVo : mapShoppingCart.keySet()) {
-			pizzaVo.setStatus(pizzSubmittedStatus);
+			pizzaVo.setStatus(pizzaSubmittedStatus);
+			pizzaVo.setOrderId(ordersId);
+			System.err.println("adding pizza record: " + pizzaVo);
 			psd.addPizza(pizzaVo);
 
 			for (PizzaToppingAssociationVo ptav : mapShoppingCart.get(pizzaVo)) {
 				ptav.setPizzaId(pizzaVo.getId());
+				ptav.setId(psd.addPizzaToppingAssociation(ptav));
+				System.err.println("adding ptav record: " + ptav);
 			}
 		}
-		
-		return "/checkout.";
 	}
 
 	@RequestMapping("/cancel")
@@ -160,18 +325,18 @@ public class AppController {
 	}
 
 	public void addAttributesForMenu(Model model) {
-		model.addAttribute("sizes", TypesCache.getActiveTypesByCategory("SIZE"));
-		model.addAttribute("crusts", TypesCache.getActiveTypesByCategory("CRST"));
-		model.addAttribute("cheeses", TypesCache.getActiveTypesByCategory("CHES"));
-		model.addAttribute("sauces", TypesCache.getActiveTypesByCategory("SAUC"));
-		model.addAttribute("toppings", TypesCache.getActiveTypesByCategory("TOPP"));
+		model.addAttribute("sizes", TypesCache.getActiveTypesByCategory(onlineOrderService, "SIZE"));
+		model.addAttribute("crusts", TypesCache.getActiveTypesByCategory(onlineOrderService, "CRST"));
+		model.addAttribute("cheeses", TypesCache.getActiveTypesByCategory(onlineOrderService, "CHES"));
+		model.addAttribute("sauces", TypesCache.getActiveTypesByCategory(onlineOrderService, "SAUC"));
+		model.addAttribute("toppings", TypesCache.getActiveTypesByCategory(onlineOrderService, "TOPP"));
 	}
 
-	protected Map<PizzaVo, String> prepareCartForDisplay() {
+	protected Map<PizzaVo, String> prepareCartForDisplay(Map<PizzaVo, List<PizzaToppingAssociationVo>> mapOrder) {
 		Map<PizzaVo, String> mapDescriptionToPizza = new HashMap<PizzaVo, String>();
 
-		for (PizzaVo pizzaVo : mapShoppingCart.keySet()) {
-			StringBuffer sbPizzaDescription = generateDisplayStringForPizza(pizzaVo);
+		for (PizzaVo pizzaVo : mapOrder.keySet()) {
+			StringBuffer sbPizzaDescription = generateDisplayStringForPizza(pizzaVo, mapOrder.get(pizzaVo));
 			pizzaVo.setPrice(calculatePrice(pizzaVo));
 			mapDescriptionToPizza.put(pizzaVo, sbPizzaDescription.toString());
 		}
@@ -179,18 +344,16 @@ public class AppController {
 		return mapDescriptionToPizza;
 	}
 
-	private StringBuffer generateDisplayStringForPizza(PizzaVo pizzaVo) {
+	private StringBuffer generateDisplayStringForPizza(PizzaVo pizzaVo, List<PizzaToppingAssociationVo> lstToppings) {
 		StringBuffer sbPizzaDescription = new StringBuffer();
-		sbPizzaDescription.append(TypesCache.getById(pizzaVo.getSize()).getDescription());
+		sbPizzaDescription.append(TypesCache.getById(onlineOrderService, pizzaVo.getSize()).getDescription());
 		sbPizzaDescription.append(" ");
-		sbPizzaDescription.append(TypesCache.getById(pizzaVo.getCrust()).getDescription());
+		sbPizzaDescription.append(TypesCache.getById(onlineOrderService, pizzaVo.getCrust()).getDescription());
 		sbPizzaDescription.append(" crust with ");
-		sbPizzaDescription.append(TypesCache.getById(pizzaVo.getSauce()).getDescription());
+		sbPizzaDescription.append(TypesCache.getById(onlineOrderService, pizzaVo.getSauce()).getDescription());
 		sbPizzaDescription.append(" sauce, ");
-		sbPizzaDescription.append(TypesCache.getById(pizzaVo.getCheese()).getDescription());
+		sbPizzaDescription.append(TypesCache.getById(onlineOrderService, pizzaVo.getCheese()).getDescription());
 		sbPizzaDescription.append(" cheese");
-
-		List<PizzaToppingAssociationVo> lstToppings = mapShoppingCart.get(pizzaVo);
 
 		if(!lstToppings.isEmpty()) {
 			sbPizzaDescription.append(", and");
@@ -201,7 +364,7 @@ public class AppController {
 				}
 
 				PizzaToppingAssociationVo ptav = lstToppings.get(i);
-				sbPizzaDescription.append(TypesCache.getById(ptav.getToppingsId()).getDescription());
+				sbPizzaDescription.append(TypesCache.getById(onlineOrderService, ptav.getToppingsId()).getDescription());
 
 				if(ptav.getLeft() != ptav.getRight()) {
 					sbPizzaDescription.append(((ptav.getLeft()) ? " (Left Side Only)" : " (Right Side Only)" ));
@@ -216,23 +379,63 @@ public class AppController {
 		return sbPizzaDescription;
 	}
 
+	@RequestMapping("/lookupCustomer")
+	public String lookupCustomer(Model model, @ModelAttribute("email_returningCustomer") String email,
+			@ModelAttribute("password_returningCustomer") String password) {
+		 CustomerServiceDao csd = new CustomerServiceDao();
+		 CustomerVo cv = csd.getByEmail(email);
+
+		 if(cv != null) {
+			 model.addAttribute("customerId", cv.getId());
+			 model.addAttribute("firstName", cv.getFirstName());
+		 } else {
+			 model.addAttribute("No customer found for " + email);
+			 return "";
+		 }
+
+		/**
+		 * if(lsv != null) {
+		 * 		LoginServiceDao lsd = new LoginServiceDao();
+		 * 		LoginServiceVo lsv = lsd.getLogin(, password);
+		 * } else {
+		 * 		model.addAttribute("notFound", "Could not find user with that email/password. Please try again.");
+		 * 		return "/customer.";
+		 * }
+		 */
+		return "/checkout.";
+	}
+
+	@RequestMapping("/loginCustomer")
+	public String loginCustomer(Model model, @ModelAttribute("itemsToDelete") String itemsToDelete) {
+		removePizzasFromOrder(itemsToDelete);
+		model.addAttribute("IOWA", TypesCache.getBySequenceCode(onlineOrderService, "STAT_0015"));
+		return "/customer.";
+	}
+
 	public BigDecimal calculatePrice(PizzaVo pizzaVo) {
 		//need size and toppings
 		//get appropriate records from Modifiers
 		//do mafs
-		ModifierVo mvBasePrice = ModifierServiceDao.getCurrentByType(TypesCache.getBySequenceCode("PRCE_0001").getId());
-		ModifierVo mvTopping = ModifierServiceDao.getCurrentByType(TypesCache.getBySequenceCode("PRCE_0002").getId());
-		ModifierVo mvHalfTopping = ModifierServiceDao.getCurrentByType(TypesCache.getBySequenceCode("PRCE_0007").getId());
-		ModifierVo mvSize = ModifierServiceDao.getCurrentByType(pizzaVo.getSize());
+		ModifierVo mvBasePrice =
+				onlineOrderService.getCurrentModifierByType(TypesCache.getBySequenceCode(onlineOrderService, "PRCE_0001").getId());
+		ModifierVo mvTopping =
+				onlineOrderService.getCurrentModifierByType(TypesCache.getBySequenceCode(onlineOrderService, "PRCE_0002").getId());
+		ModifierVo mvHalfTopping =
+				onlineOrderService.getCurrentModifierByType(TypesCache.getBySequenceCode(onlineOrderService, "PRCE_0007").getId());
+		ModifierVo mvSize =
+				onlineOrderService.getCurrentModifierByType(pizzaVo.getSize());
 
 		BigDecimal bdPrice = mvBasePrice.getValue().multiply(mvSize.getValue());
 		BigDecimal bdToppingsTotal = BigDecimal.ZERO; //mvTopping.getValue().multiply(BigDecimal.valueOf(mapShoppingCart.get(pizzaVo).size()));
+		List<PizzaToppingAssociationVo> lstToppings = mapShoppingCart.get(pizzaVo);
 
-		for (PizzaToppingAssociationVo ptav : mapShoppingCart.get(pizzaVo)) {
-			if(ptav.getLeft() != ptav.getRight()) { //topping only on one side
-				bdToppingsTotal = bdToppingsTotal.add(mvTopping.getValue().multiply(mvHalfTopping.getValue()));
-			} else {
-				bdToppingsTotal = bdToppingsTotal.add(mvTopping.getValue());
+		if(lstToppings != null) {
+			for (PizzaToppingAssociationVo ptav : lstToppings) {
+				if(ptav.getLeft() != ptav.getRight()) { //topping only on one side
+					bdToppingsTotal = bdToppingsTotal.add(mvTopping.getValue().multiply(mvHalfTopping.getValue()));
+				} else {
+					bdToppingsTotal = bdToppingsTotal.add(mvTopping.getValue());
+				}
 			}
 		}
 
@@ -241,7 +444,7 @@ public class AppController {
 
 	public BigDecimal calculateTotal(Set<PizzaVo> pizzas) {
 		BigDecimal bdTotal = BigDecimal.ZERO;
-
+          
 		for (PizzaVo pizzaVo : pizzas) {
 			bdTotal = bdTotal.add(pizzaVo.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
 		}

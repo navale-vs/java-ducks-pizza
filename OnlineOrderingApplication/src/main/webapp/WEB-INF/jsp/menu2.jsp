@@ -12,7 +12,7 @@
 	</head>
 	<body>
 		<form:form method="POST" action="/addItem">
-			<table id="options">
+			<table id="editableContent">
 			</table>
 		</form:form>
 	

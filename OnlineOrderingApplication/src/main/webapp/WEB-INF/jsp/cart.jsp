@@ -8,10 +8,13 @@
 		<link rel="stylesheet" href="/css/styles.css"/>
 		<title>Cart</title>
 	</head>
-	<body>
-		<form method="POST" action="/addorder">
+	<script type="text/javascript" src="/scripts/scripts.js"></script>
+	<body onload="includeHtml(); enableContinue()">
+		<div w3-include-html="header.html"></div>
+		<div w3-include-html="sidebar.html"></div>
+		<form method="POST" action="/loginCustomer">
 			<input type="hidden" id="itemsToDelete" name="itemsToDelete" value="" />
-			<table id="cart">
+			<table class="editableContent">
 				<tr>
 					<td class="garbage">
 						<img class="removeButton" height="25" width="25" src="/img/closedGarbage.png" onmousedown="src='/img/openGarbage.png'"
@@ -35,14 +38,15 @@
 							onclick="location.href = '/menu'"/>
 					</td>
 					<td>
-						<input type="button" class="cartButton" onclick="location.href = '/menu'" value="Back to Menu">
-						<input type="Submit" class="cartButton" onclick="removeItems();" value="Place Order">
-						<input type="button" class="cartButton" onclick="location.href = '/cancel'" value="Cancel">
+						<input type="button" class="cartButton" onclick="location.href = '/menu'" value="Back to Menu" />
+						<input type="Submit" class="cartButton" onclick="removeItems();" value="Continue" id="continue" />
+						<input type="button" class="cartButton" onclick="location.href = '/cancel'" value="Cancel" />
 					</td>
 					<td class="price">${total}</td>
 				</tr>
 			</table>
 		</form>
+		<div w3-include-html="footer.html"></div>
 	</body>
 
 	<script type="text/javascript"> //will move to separate file later, then change to use getCheckedElements() in menu.jsp
@@ -61,12 +65,20 @@
 
 			for(i = 0; i < elemArray.length; i++) {
 				if(elemArray[i].checked == true) {
-					checkedArray.push(elemArray[i].id);
+					var pizza = {id: elemArray[i].id};
+					console.log(JSON.stringify(pizza));
+					checkedArray.push(JSON.stringify(pizza));
 				}
 			}
 
 			console.log("checkedArray: " + checkedArray);
-			document.getElementById("itemsToDelete").value = checkedArray;
+			document.getElementById("itemsToDelete").value = "[" + checkedArray + "]";
+		}
+
+		function enableContinue() {
+			console.log("total: " + ${total});
+			console.log("total <= 0: " + ${total <= 0});
+			document.getElementById("continue").disabled = ${total <= 0};
 		}
 	</script>
 </html>

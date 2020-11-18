@@ -147,11 +147,12 @@ public class ModifierDaoFt extends BasicDaoFt {
 		Session session = null;
 		try {
 			session = SessionUtil.getInstance().openSession();
-			List<ModifierVo> lstModifiersVos = modifierDao.getCurrentByType(modifierVo.getTypeId(), session);
-			System.err.println("lstModifiersVos is : " + ((lstModifiersVos == null) ? "null." : " not null."));
-			for (ModifierVo typesVo : lstModifiersVos) {
-				System.out.println(typesVo.toString());
-			}
+			ModifierVo mv = modifierDao.getCurrentByType(modifierVo.getTypeId(), session);
+//			List<ModifierVo> lstModifiersVos = modifierDao.getCurrentByType(modifierVo.getTypeId(), session);
+			System.err.println("lstModifiersVos is : " + ((mv == null) ? "null." : mv.toString()));
+//			for (ModifierVo typesVo : lstModifiersVos) {
+//				System.out.println(typesVo.toString());
+//			}
 		} finally {
 			if(session != null) {
 				session.close();

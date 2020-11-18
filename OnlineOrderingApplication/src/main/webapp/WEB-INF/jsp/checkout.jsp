@@ -7,11 +7,34 @@
 	<head>
 		<meta charset="ISO-8859-1">
 		<link rel="stylesheet" href="/css/styles.css"/>
-		<title>Insert title here</title>
+		<title>Thank you for your order!</title>
 	</head>
-	<body>
-		<form method="POST" action="/thankyou">
-		
-		</form>
+	<script type="text/javascript" src="/scripts/scripts.js"></script>
+	<body onload="includeHtml();">
+		<div w3-include-html="header.html"></div>
+		<div w3-include-html="sidebar.html"></div>
+		<table id="orderReview" class="staticContent" >
+			<tr>
+				<th colspan="2">Your order (${orderId}) has been submitted!</th>
+			</tr>
+			<tr>
+				<th colspan="2">Order Review</th>
+			</tr>
+			<tr>
+				<th>Description</th>
+				<th>Price</th>
+			</tr>
+			<core:forEach var="item" items="${cartForDisplay}">
+				<tr>
+					<td>${item.value}</td>
+					<td class="price">${item.key.price}</td>
+				</tr>
+			</core:forEach>
+			<tr>
+				<td>Total:</td>
+				<td>${total}</td>
+			</tr>
+		</table>
+		<div w3-include-html="footer.html"></div>
 	</body>
 </html>

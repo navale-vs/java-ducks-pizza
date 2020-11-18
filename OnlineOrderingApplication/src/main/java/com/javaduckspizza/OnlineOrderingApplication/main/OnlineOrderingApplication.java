@@ -9,14 +9,14 @@ import com.javaduckspizza.OnlineOrderingApplication.common.TypesCache;
 public class OnlineOrderingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(OnlineOrderingApplication.class, args);
-		initCache();
+//		initCache();
 	}
 
-	protected static void initCache() {
-		TypesCache.getActiveTypesByCategory("SIZE");
-		TypesCache.getActiveTypesByCategory("CRST");
-		TypesCache.getActiveTypesByCategory("SAUC");
-		TypesCache.getActiveTypesByCategory("CHES");
-		TypesCache.getActiveTypesByCategory("TOPP");
-	}
+//	protected static void initCache() {
+//		TypesCache.getActiveTypesByCategory("SIZE");
+//		TypesCache.getActiveTypesByCategory("CRST");
+//		TypesCache.getActiveTypesByCategory("SAUC");
+//		TypesCache.getActiveTypesByCategory("CHES");
+//		TypesCache.getActiveTypesByCategory("TOPP");
+//	}
 }

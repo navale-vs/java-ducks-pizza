@@ -1,5 +1,6 @@
 package com.javaduckspizza.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -52,9 +53,11 @@ public class PizzaToppingAssociationDao implements IPizzaToppingAssociation {
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<PizzaToppingAssociationVo> cq = cb.createQuery(PizzaToppingAssociationVo.class);
 		Root<PizzaToppingAssociationVo> root = cq.from(PizzaToppingAssociationVo.class);
-		Query<PizzaToppingAssociationVo> query = session.createQuery(cq);
 		cq.where(cb.equal(root.get("id"), pizzaId));
-		List<PizzaToppingAssociationVo> lstPtavs = query.list();
+		Query<PizzaToppingAssociationVo> query = session.createQuery(cq);
+
+		List<PizzaToppingAssociationVo> lstPtavs = new ArrayList<PizzaToppingAssociationVo>();
+		query.list();
 		txn.commit();
 		
 		return lstPtavs;

@@ -187,7 +187,7 @@ public class OnlineOrderServiceFt {
 	private void getTypesBySequenceCode() throws Exception {
 		final String sequence_code = "CHES_0001";
 		
-		TypesVo tvGet = oos.getTypesBySequenceCode(sequence_code);
+		TypesVo tvGet = oos.getTypeBySequenceCode(sequence_code);
 		System.out.println("getTypesBySequenceCode: " +
 				((tvGet != null) && sequence_code.equals(tvGet.getSequenceCode()) ? PASS : FAIL));
 	}

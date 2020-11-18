@@ -16,17 +16,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.hibernate.Session;
-
 import com.javaduckspizza.service.dao.CustomerServiceDao;
 import com.javaduckspizza.service.dao.ModifierServiceDao;
 import com.javaduckspizza.service.dao.OrderServiceDao;
 import com.javaduckspizza.service.dao.PizzaServiceDao;
 import com.javaduckspizza.service.dao.TypesServiceDao;
-import com.javaduckspizza.util.SessionUtil;
 import com.javaduckspizza.vo.CustomerVo;
 import com.javaduckspizza.vo.ModifierVo;
 import com.javaduckspizza.vo.OrdersVo;
+import com.javaduckspizza.vo.PizzaToppingAssociationVo;
 import com.javaduckspizza.vo.PizzaVo;
 import com.javaduckspizza.vo.TypesVo;  
 
@@ -51,7 +49,7 @@ public class OnlineOrderService {
 	@Path("/customer/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public String addCustomer(@FormParam("firstName") String firstName, @FormParam("middleName") String middleName,
+	public Long addCustomer(@FormParam("firstName") String firstName, @FormParam("middleName") String middleName,
 			@FormParam("lastName") String lastName, @FormParam("streetAddress1") String streetAddress1,
 			@FormParam("streetAddress2") String streetAddress2, @FormParam("city") String city, @FormParam("zipcode5") String zipcode5,
 			@FormParam("zipcode4") String zipcode4, @FormParam("phone") String phone, @FormParam("state") long state,
@@ -72,7 +70,8 @@ public class OnlineOrderService {
 		long id = customerServiceDao.addCustomer(customerVo);
 		System.out.println("id: " + id);
 
-		return ((id > 0) ? SUCCESS_MESSAGE : FAILURE_MESSAGE);
+//		return ((id > 0) ? SUCCESS_MESSAGE : FAILURE_MESSAGE);
+		return id;
 	}
 
 	@PUT
@@ -136,10 +135,36 @@ public class OnlineOrderService {
 			@FormParam("total") BigDecimal total, @FormParam("status") long status, @FormParam("dateTimePlaced") Timestamp dateTimePlaced,
 			@FormParam("dateTimeDue") Timestamp dateTimeDue, @FormParam("dateTimeReady") Timestamp dateTimeReady,
 			@FormParam("dateTimeCompleted") Timestamp dateTimeCompleted, @Context HttpServletResponse response) {
-		OrdersVo orderVo = new OrdersVo();
-		long orderId = orderServiceDao.addOrder(orderVo);
+		OrdersVo ordersVo = new OrdersVo();
+		ordersVo.setCustomerId(customerId);
+		ordersVo.setRetrievalMethod(retrievalMethod);
+		ordersVo.setTotal(total);
+		ordersVo.setStatus(status);
+		ordersVo.setDateTimePlaced(dateTimePlaced);
+		ordersVo.setDateTimeDue(dateTimeDue);
+		ordersVo.setDateTimeReady(dateTimeReady);
+		ordersVo.setDateTimeCompleted(dateTimeCompleted);
+		long orderId = orderServiceDao.addOrder(ordersVo);
+
 		return orderId;
 	}
+
+
+	/*
+	 * Orders
+	 */
+//	@POST
+//	@Path("/orders")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//	public long addOrder(@FormParam("customerId") long customerId, @FormParam("retrievalMethod") long retrievalMethod,
+//			@FormParam("total") BigDecimal total, @FormParam("status") long status, @FormParam("dateTimePlaced") Timestamp dateTimePlaced,
+//			@FormParam("dateTimeDue") Timestamp dateTimeDue, @FormParam("dateTimeReady") Timestamp dateTimeReady,
+//			@FormParam("dateTimeCompleted") Timestamp dateTimeCompleted) {
+//		OrdersVo orderVo = new OrdersVo();
+//		long orderId = orderServiceDao.addOrder(orderVo);
+//		return orderId;
+//	}
 
 	@GET
 	@Path("/orders/id/{id}")
@@ -177,9 +202,9 @@ public class OnlineOrderService {
 	@Path("/pizza/orderid/{orderid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<PizzaVo> getPizzaByOrderId(@PathParam(value = "orderId") long orderId) {
-		Session session = SessionUtil.getInstance().openSession();
+//		Session session = SessionUtil.getInstance().openSession();
 		List<PizzaVo> lstPizzaVo = pizzaServiceDao.getByOrderId(orderId);
-		session.close();
+//		session.close();
 		return lstPizzaVo;
 	}
 
@@ -188,9 +213,9 @@ public class OnlineOrderService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<PizzaVo> getPizzaByOrderIdAndStatus(@PathParam(value = "orderId") long orderId,
 			@PathParam(value = "status") long status) {
-		Session session = SessionUtil.getInstance().openSession();
+//		Session session = SessionUtil.getInstance().openSession();
 		List<PizzaVo> lstPv = pizzaServiceDao.getByOrderIdAndStatus(orderId, status);
-		session.close();
+//		session.close();
 		return lstPv;
 	}
 
@@ -200,7 +225,7 @@ public class OnlineOrderService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public long addPizza(@FormParam("crust") long crust, @FormParam("orderId") long orderId, @FormParam("price") BigDecimal price,
 			@FormParam("sauce") long sauce, @FormParam("size") long size, @FormParam("status") long status,
-			@Context HttpServletResponse response) {
+			List<PizzaToppingAssociationVo> lstToppings, @Context HttpServletResponse response) {
 		PizzaVo pizzaVo = new PizzaVo();
 		pizzaVo.setCrust(crust);
 		pizzaVo.setOrderId(orderId);
@@ -210,6 +235,12 @@ public class OnlineOrderService {
 		pizzaVo.setStatus(status);
 
 		long id = pizzaServiceDao.addPizza(pizzaVo);
+
+		for (PizzaToppingAssociationVo ptav : lstToppings) {
+			ptav.setPizzaId(pizzaVo.getId());
+			pizzaServiceDao.addPizzaToppingAssociation(ptav);
+		}
+
 		return id;
 	}
 	/*
@@ -219,9 +250,9 @@ public class OnlineOrderService {
 	@Path("/types/id/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public TypesVo getTypeById(@PathParam(value = "id") long id) {
-		Session session = SessionUtil.getInstance().openSession();
+//		Session session = SessionUtil.getInstance().openSession();
 		TypesVo tv = typesServiceDao.getById(id);
-		session.close();
+//		session.close();
 
 		return tv;
 	}
@@ -229,10 +260,10 @@ public class OnlineOrderService {
 	@GET
 	@Path("/types/sequenceCode/{sequenceCode}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public TypesVo getTypesBySequenceCode(@PathParam(value = "sequenceCode") String sequenceCode) {
-		Session session = SessionUtil.getInstance().openSession();
+	public TypesVo getTypeBySequenceCode(@PathParam(value = "sequenceCode") String sequenceCode) {
+//		Session session = SessionUtil.getInstance().openSession();
 		TypesVo tv = typesServiceDao.getBySequenceCode(sequenceCode);
-		session.close();
+//		session.close();
 
 		return tv;
 	}
@@ -241,9 +272,9 @@ public class OnlineOrderService {
 	@Path("/types/category/{category}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<TypesVo> getTypesByCategory(@PathParam(value = "category") String category) {
-		Session session = SessionUtil.getInstance().openSession();
+//		Session session = SessionUtil.getInstance().openSession();
 		List<TypesVo> lst = typesServiceDao.getByCategory(category);
-		session.close();
+//		session.close();
 
 		return lst;
 	}
@@ -253,9 +284,9 @@ public class OnlineOrderService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<TypesVo> getTypesByCategoryAndStatus(@PathParam(value = "category") String category,
 			@PathParam(value = "category") boolean active) {
-		Session session = SessionUtil.getInstance().openSession();
+//		Session session = SessionUtil.getInstance().openSession();
 		List<TypesVo> lst = typesServiceDao.getByCategoryAndStatus(category, active);
-		session.close();
+//		session.close();
 
 		return lst;
 	}

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import com.javaduckspizza.service.dao.TypesServiceDao;
 import com.javaduckspizza.vo.CustomerVo;
 import com.javaduckspizza.vo.ModifierVo;
 import com.javaduckspizza.vo.OrdersVo;
+import com.javaduckspizza.vo.PizzaToppingAssociationVo;
 import com.javaduckspizza.vo.PizzaVo;
 import com.javaduckspizza.vo.TypesVo;
 
@@ -73,7 +75,9 @@ class OnlineOrderServiceTest {
 		long state = 13L;
 		String email = "account@domain.extension";
 
-		String message = oos.addCustomer(firstName, middleName, lastName, streetAddress1, streetAddress2, city, zipcode5, zipcode4, phone,
+//		String message = oos.addCustomer(firstName, middleName, lastName, streetAddress1, streetAddress2, city, zipcode5, zipcode4, phone,
+//				state, email, null);
+		Long id = oos.addCustomer(firstName, middleName, lastName, streetAddress1, streetAddress2, city, zipcode5, zipcode4, phone,
 				state, email, null);
 		verify(customerServiceDao, times(1)).addCustomer(any(CustomerVo.class));
 	}
@@ -172,8 +176,9 @@ class OnlineOrderServiceTest {
 		long size = 8L;
 		long sauce = 77L;
 		long status = 98L;
+		List<PizzaToppingAssociationVo> lstPtav = new ArrayList<PizzaToppingAssociationVo>();
 
-		long id = oos.addPizza(crust, orderId, price, sauce, size, status, null);
+		long id = oos.addPizza(crust, orderId, price, sauce, size, status, lstPtav, null);
 		verify(pizzaServiceDao, times(1)).addPizza(any(PizzaVo.class));
 	}
 
@@ -220,7 +225,7 @@ class OnlineOrderServiceTest {
 	@Test
 	void testGetTypesBySequenceCode() {
 		String sequenceCode = "TEST_0001";
-		TypesVo tv = oos.getTypesBySequenceCode(sequenceCode);
+		TypesVo tv = oos.getTypeBySequenceCode(sequenceCode);
 		verify(typesServiceDao, times(1)).getBySequenceCode(sequenceCode);
 	}
 
