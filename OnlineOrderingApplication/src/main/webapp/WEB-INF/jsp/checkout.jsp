@@ -12,7 +12,7 @@
 	<script type="text/javascript" src="/scripts/scripts.js"></script>
 	<body onload="includeHtml();">
 		<div w3-include-html="header.html"></div>
-		<div w3-include-html="sidebar.html"></div>
+		<div w3-include-html="/sidebar"></div>
 		<table id="orderReview" class="staticContent" >
 			<tr>
 				<th colspan="2">Your order (${orderId}) has been submitted!</th>

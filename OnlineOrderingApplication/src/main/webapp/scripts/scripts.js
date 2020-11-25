@@ -1,3 +1,4 @@
+//COMMON
 //from https://www.w3schools.com/howto/howto_html_include.asp
 function includeHtml() {
   var z, i, elmnt, file, xhttp;

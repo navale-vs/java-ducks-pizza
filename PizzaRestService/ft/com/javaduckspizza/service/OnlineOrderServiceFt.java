@@ -69,7 +69,7 @@ public class OnlineOrderServiceFt {
 
 	private void getCustomerByEmail() {
 		final String email = "email@domain.com";
-		CustomerVo customerVo = oos.getCustomerByEmail(email);
+		CustomerVo customerVo = oos.getCustomerByEmail(email, null);
 		System.out.println("getCustomerByEmail: " +
 				( ((customerVo != null) && email.equals(customerVo.getEmail())) ? PASS : FAIL));
 	}
@@ -141,7 +141,7 @@ public class OnlineOrderServiceFt {
 
 	private void getPizzaByOrderId() {
 		final long orderId = 1L;
-		List<PizzaVo> lstPizza = oos.getPizzaByOrderId(orderId);
+		List<PizzaVo> lstPizza = oos.getPizzaByOrderId(orderId, null);
 		System.out.println("getPizzaByOrderId: " + ( ((lstPizza != null) && !lstPizza.isEmpty()) ? PASS : FAIL));
 	}
 	

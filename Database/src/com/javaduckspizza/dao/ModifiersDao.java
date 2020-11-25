@@ -12,7 +12,7 @@ import com.javaduckspizza.dao.interfaces.IModifiersDao;
 import com.javaduckspizza.vo.ModifierVo;
 import com.javaduckspizza.vo.TypesVo;
 
-public class ModifierDao implements IModifiersDao {
+public class ModifiersDao implements IModifiersDao {
 	private static final String HQL_UPDATE = "UPDATE ModifierVo SET DATE_EXPIRED = :dateExpired WHERE ID = :id";
 	private static final String HQL_GET_BY_ID = "FROM ModifierVo WHERE ID = :id";
 	private static final String HQL_GET_BY_TYPE_ID = "FROM ModifierVo WHERE TYPE_ID = :typeId";
@@ -25,7 +25,7 @@ public class ModifierDao implements IModifiersDao {
 			+ " (DATE_EXPIRED IS NULL OR DATE_EXPIRED > CURRENT_DATE)";
 	private static final String HQL_DELETE = "DELETE FROM ModifierVo WHERE ID = :id";
 
-	public ModifierDao() {}
+	public ModifiersDao() {}
 
 	@Override
 	public long insert(ModifierVo mv, Session session) {

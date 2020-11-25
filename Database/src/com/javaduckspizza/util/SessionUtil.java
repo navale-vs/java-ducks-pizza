@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import com.javaduckspizza.vo.CustomerVo;
+import com.javaduckspizza.vo.LoginVo;
 import com.javaduckspizza.vo.ModifierVo;
 import com.javaduckspizza.vo.OrdersVo;
 import com.javaduckspizza.vo.PizzaToppingAssociationVo;
@@ -54,6 +55,7 @@ public class SessionUtil {
 		configuration.setProperty("hibernate.show_sql", "true");
 
 		configuration.addAnnotatedClass(CustomerVo.class);
+		configuration.addAnnotatedClass(LoginVo.class);
 		configuration.addAnnotatedClass(ModifierVo.class);
 		configuration.addAnnotatedClass(OrdersVo.class);
 		configuration.addAnnotatedClass(PizzaToppingAssociationVo.class);

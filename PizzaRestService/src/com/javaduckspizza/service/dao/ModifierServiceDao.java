@@ -2,23 +2,24 @@ package com.javaduckspizza.service.dao;
 
 import org.hibernate.Session;
 
-import com.javaduckspizza.dao.ModifierDao;
+import com.javaduckspizza.dao.ModifiersDao;
+import com.javaduckspizza.dao.interfaces.IModifiersDao;
 import com.javaduckspizza.util.SessionUtil;
 import com.javaduckspizza.vo.ModifierVo;
 
 public class ModifierServiceDao {
-	private static ModifierDao modifierDao = new ModifierDao();
+	private IModifiersDao iModifierDao = new ModifiersDao();
 
-	public static ModifierVo getById(long id) {
+	public ModifierVo getById(long id) {
 		Session session = SessionUtil.getInstance().openSession();
-		ModifierVo mv = modifierDao.get(id, session);
+		ModifierVo mv = iModifierDao.get(id, session);
 		session.close();
 		return mv;
 	}
 
-	public static ModifierVo getCurrentByType(long type) {
+	public ModifierVo getCurrentByType(long type) {
 		Session session = SessionUtil.getInstance().openSession();
-		ModifierVo mv = modifierDao.getCurrentByType(type, session);
+		ModifierVo mv = iModifierDao.getCurrentByType(type, session);
 		session.close();
 		return mv;
 	}

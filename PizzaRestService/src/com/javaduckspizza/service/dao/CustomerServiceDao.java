@@ -3,15 +3,16 @@ package com.javaduckspizza.service.dao;
 import org.hibernate.Session;
 
 import com.javaduckspizza.dao.CustomerDao;
+import com.javaduckspizza.dao.interfaces.ICustomerDao;
 import com.javaduckspizza.util.SessionUtil;
 import com.javaduckspizza.vo.CustomerVo;
 
 public class CustomerServiceDao {
-	private CustomerDao customerDao = new CustomerDao();
+	private ICustomerDao iCustomerDao = new CustomerDao();
 
 	public long addCustomer(CustomerVo customerVo) {
 		Session session = SessionUtil.getInstance().openSession();
-		long id = customerDao.insert(customerVo, session);
+		long id = iCustomerDao.insert(customerVo, session);
 		session.close();
 		
 		return id;
@@ -19,7 +20,7 @@ public class CustomerServiceDao {
 
 	public CustomerVo getById(long id) {
 		Session session = SessionUtil.getInstance().openSession();
-		CustomerVo cv = customerDao.getById(id, session);
+		CustomerVo cv = iCustomerDao.getById(id, session);
 		session.close();
 
 		return cv;
@@ -27,7 +28,7 @@ public class CustomerServiceDao {
 
 	public CustomerVo getByEmail(String email) {
 		Session session = SessionUtil.getInstance().openSession();
-		CustomerVo cv = customerDao.getByEmail(email, session);
+		CustomerVo cv = iCustomerDao.getByEmail(email, session);
 		session.close();
 
 		return cv;
@@ -35,7 +36,7 @@ public class CustomerServiceDao {
 
 	public int updateCustomer(CustomerVo customerVo) {
 		Session session = SessionUtil.getInstance().openSession();
-		int rowsUpdated = customerDao.update(customerVo, session);
+		int rowsUpdated = iCustomerDao.update(customerVo, session);
 		session.close();
 		return rowsUpdated;
 	}

@@ -8,11 +8,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 
 import com.javaduckspizza.dao.interfaces.IPizzaDao;
@@ -25,15 +22,6 @@ import com.javaduckspizza.vo.PizzaVo;
  * that mixing the two styles in enterprise-level code would be bad practice. 
  */
 public class PizzaDao implements IPizzaDao {
-//	private static final String HQL_UPDATE = "UPDATE PizzaVo " +
-//			"SET CRUST = :crust, SAUCE = :sauce, SIZE = :size, ORDER_ID = :orderId, STATUS = :status, PRICE = :price " +
-//			"WHERE ID = :id";
-//	private static final String HQL_GET_BY_ID = "FROM PizzaVo WHERE ID = :id";
-//	private static final String HQL_GET_BY_ORDER_ID = "FROM PizzaVo WHERE ORDER_ID = :orderId";
-//	private static final String HQL_GET_BY_ORDER_ID_AND_STATUS_ID = "FROM PizzaVo WHERE ORDER_ID = :orderId and STATUS_ID = :statusId";
-//	private static final String HQL_GET_BY_STATUS_ID = "FROM PizzaVo WHERE STATUS_ID = :statusId";
-//	private static final String HQL_DELETE = "DELETE PizzaVo WHERE ID = :id";
-
 	public PizzaDao() {
 	}
 

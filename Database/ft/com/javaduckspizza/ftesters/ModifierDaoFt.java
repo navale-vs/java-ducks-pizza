@@ -7,16 +7,16 @@ import java.util.List;
 
 import org.hibernate.Session;
 
-import com.javaduckspizza.dao.ModifierDao;
+import com.javaduckspizza.dao.ModifiersDao;
 import com.javaduckspizza.util.SessionUtil;
 import com.javaduckspizza.vo.ModifierVo;
 
 public class ModifierDaoFt extends BasicDaoFt {
 	ModifierVo modifierVo;
-	ModifierDao modifierDao;
+	ModifiersDao modifierDao;
 
 	public ModifierDaoFt() {
-		modifierDao = new ModifierDao();
+		modifierDao = new ModifiersDao();
 	}
 
 	public static void main(String[] args) {

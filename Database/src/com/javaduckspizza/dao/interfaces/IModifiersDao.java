@@ -12,6 +12,7 @@ public interface IModifiersDao {
 	public int delete(long id, Session session);
 	public int update(ModifierVo cv, Session session);
 	public ModifierVo get(long id, Session session);
+	public ModifierVo getCurrentByType(long typeId, Session session);
 	public List<ModifierVo> getByTypeId(long typeId, Session session);
 	public List<ModifierVo> getByDateActive(Date expiration, Session session);
 	public List<ModifierVo> getByDateExpired(Date expiration, Session session);

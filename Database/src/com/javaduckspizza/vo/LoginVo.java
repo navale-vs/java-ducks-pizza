@@ -9,18 +9,15 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="LOGIN", schema="public", uniqueConstraints= {
-		@UniqueConstraint(columnNames="CUSTOMER_ID")})
+@Table(name="LOGIN", schema="public", uniqueConstraints= {@UniqueConstraint(columnNames="CUSTOMER_ID")})
 public class LoginVo {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="CUSTOMER_ID")
 	private Long customerId;
 	@Column(name="PASSWORD")
 	private String password;
 
 	public LoginVo() {
-		
 	}
 
 	public Long getCustomerId() {
@@ -44,12 +41,18 @@ public class LoginVo {
 		LoginVo login = new LoginVo();
 		login.setCustomerId(getCustomerId());
 		login.setPassword(getPassword());
+
 		return login;
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
+		sb.append("CustomerId: ");
+		sb.append(getCustomerId());
+		sb.append("\tPassword: ");
+		sb.append(getPassword());
+
 		return sb.toString();
 	}
 }

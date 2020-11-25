@@ -8,77 +8,89 @@
 		<link rel="stylesheet" href="/css/styles.css"/>
 		<title>Cart</title>
 	</head>
+	<script type="text/javascript" src="/scripts/cart.js"></script>
 	<script type="text/javascript" src="/scripts/scripts.js"></script>
-	<body onload="includeHtml(); enableContinue()">
+	<body onload="includeHtml(); enableContinue(${total});">
 		<div w3-include-html="header.html"></div>
-		<div w3-include-html="sidebar.html"></div>
-		<form method="POST" action="/loginCustomer">
+		<div w3-include-html="/sidebar"></div>
+		<form method="POST" action="/loginCustomer" id="cartForm">
 			<input type="hidden" id="itemsToDelete" name="itemsToDelete" value="" />
 			<table class="editableContent">
 				<tr>
 					<td class="garbage">
 						<img class="removeButton" height="25" width="25" src="/img/closedGarbage.png" onmousedown="src='/img/openGarbage.png'"
-							onmouseup="src='/img/closedGarbage.png'" onblur="src='/img/closedGarbage.png'" onclick="handleDelete()"
+							onmouseup="src='/img/closedGarbage.png'" onclick="changeAction(cartForm, '/removeItem'); handleDelete(); cartForm.submit();"
 							alt="Remove" title="Remove Checked Items"/>
 					</td>
 					<th>Description</th>
 					<th>Price</th>
 				</tr>
-					<core:forEach var="item" items="${cartForDisplay}">
-						<tr>
-							<td><input id="${item.key.id}" class="checkToRemove" name="checkToRemove" type="checkbox"/></td>
-							<td>${item.value}</td>
-							<td class="price">${item.key.price}</td>
-						</tr>
-					</core:forEach>
+				<core:forEach var="item" items="${cartForDisplay}">
+					<tr>
+						<td><input id="${item.key.id}" class="checkToRemove" name="checkToRemove" type="checkbox"/></td>
+						<td>${item.value}</td>
+						<td class="price">${item.key.price}</td>
+					</tr>
+				</core:forEach>
 				<tr>
 					<td class="garbage">
 						<img class="removeButton" height="25" width="25" src="/img/closedGarbage.png" onmousedown="src='/img/openGarbage.png'"
-							onmouseup="src='/img/closedGarbage.png'" onclick="handleDelete()" alt="Remove" title="Remove Item"
-							onclick="location.href = '/menu'"/>
+							onmouseup="src='/img/closedGarbage.png'" onclick="changeAction(cartForm, '/removeItem'); handleDelete(); cartForm.submit();"
+							alt="Remove" title="Remove Item"/>
 					</td>
 					<td>
 						<input type="button" class="cartButton" onclick="location.href = '/menu'" value="Back to Menu" />
-						<input type="Submit" class="cartButton" onclick="removeItems();" value="Continue" id="continue" />
+						<input type="Submit" class="cartButton" onclick="changeAction(cartForm, '/loginCustomer'); removeItems(); cartForm.submit();" value="Continue" id="continue" />
 						<input type="button" class="cartButton" onclick="location.href = '/cancel'" value="Cancel" />
 					</td>
 					<td class="price">${total}</td>
 				</tr>
+<!-- 				<tr> -->
+<!-- 					<td></td> -->
+<!-- 					<td> -->
+<%-- 					<core:forEach var="item" items="${retrievalMethod}"> --%>
+<!-- 						<td> -->
+<%-- 							<input type="radio" id="${item.description}" name="retrievalMethod" value="${item.id}"/> --%>
+<%-- 							<label for="${item.description}">${item.description}</label> --%>
+<!-- 						</td> -->
+<%-- 					</core:forEach> --%>
+<!-- 					</td> -->
+<!-- 					<td></td> -->
+<!-- 				</tr> -->
 			</table>
 		</form>
 		<div w3-include-html="footer.html"></div>
 	</body>
 
-	<script type="text/javascript"> //will move to separate file later, then change to use getCheckedElements() in menu.jsp
-		function handleDelete() {
-			console.log("in handleDelete");
-			removeItems();
-			console.log("document.getElementById(\"itemsToDelete\").value: " + document.getElementById("itemsToDelete").value);
-			location.href = '/removeItem';
-		}
+<!-- javascript moved to scripts -->
+<!-- 		function handleDelete() { -->
+<!-- 			console.log("in handleDelete"); -->
+<!-- 			removeItems(); -->
+<!-- 			console.log("document.getElementById(\"itemsToDelete\").value: " + document.getElementById("itemsToDelete").value); -->
+<!-- 			location.href = '/removeItem'; -->
+<!-- 		} -->
 
-		function removeItems() {
-			console.log("in removeItems");
-// 			var itemsToRemove = getCheckedElements();
-			var elemArray = document.getElementsByName("checkToRemove");
-			var checkedArray = [];
+<!-- 		function removeItems() { -->
+<!-- 			console.log("in removeItems"); -->
+<!-- // 			var itemsToRemove = getCheckedElements(); -->
+<!-- 			var elemArray = document.getElementsByName("checkToRemove"); -->
+<!-- 			var checkedArray = []; -->
 
-			for(i = 0; i < elemArray.length; i++) {
-				if(elemArray[i].checked == true) {
-					var pizza = {id: elemArray[i].id};
-					console.log(JSON.stringify(pizza));
-					checkedArray.push(JSON.stringify(pizza));
-				}
-			}
+<!-- 			for(i = 0; i < elemArray.length; i++) { -->
+<!-- 				if(elemArray[i].checked == true) { -->
+<!-- 					var pizza = {id: elemArray[i].id}; -->
+<!-- 					console.log(JSON.stringify(pizza)); -->
+<!-- 					checkedArray.push(JSON.stringify(pizza)); -->
+<!-- 				} -->
+<!-- 			} -->
 
-			console.log("checkedArray: " + checkedArray);
-			document.getElementById("itemsToDelete").value = "[" + checkedArray + "]";
-		}
+<!-- 			console.log("checkedArray: " + checkedArray); -->
+<!-- 			document.getElementById("itemsToDelete").value = "[" + checkedArray + "]"; -->
+<!-- 		} -->
 
-		function enableContinue() {
-			console.log("total: " + ${total});
-			console.log("total <= 0: " + ${total <= 0});
-			document.getElementById("continue").disabled = ${total <= 0};
-		}
-	</script>
+<!-- 		function enableContinue() { -->
+<%-- 			console.log("total: " + ${total}); --%>
+<!-- 			console.log("total <= 0: " + ${total <= 0}); -->
+<%-- 			document.getElementById("continue").disabled = ${total <= 0}; --%>
+<!-- 		} -->
 </html>

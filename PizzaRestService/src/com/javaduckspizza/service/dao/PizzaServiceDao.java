@@ -46,7 +46,7 @@ public class PizzaServiceDao {
 		return lstPizzaVos;
 	}
 
-	public List<PizzaToppingAssociationVo> getByPizza(long id) {
+	public List<PizzaToppingAssociationVo> getToppingsByPizza(long id) {
 		Session session = SessionUtil.getInstance().openSession();
 		List<PizzaToppingAssociationVo> lstPtav = ptad.getByPizzaId(id, session);
 		session.close();

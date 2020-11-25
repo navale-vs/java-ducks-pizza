@@ -11,7 +11,7 @@
 	<script type="text/javascript" src="/scripts/scripts.js"></script>
 	<body onload="includeHtml();">
 		<div w3-include-html="header.html"></div>
-		<div w3-include-html="sidebar.html"></div>
+		<div w3-include-html="/sidebar"></div>
 		<div>
 		<table>
 			<tr>
@@ -21,7 +21,8 @@
 							<tr>
 								<td>
 									<label for="byOrderNumber" class="customerLabel">By Order Number:</label>
-									<input type="text" name="byOrderNumber" onchange="enableSearchButton(this)"/>
+									<input type="text" name="byOrderNumber" onchange="enableSearchButton(this)"
+										onkeypress="enableSearchButton(this)"/>
 								</td>
 							</tr>
 <!-- 							<tr> -->

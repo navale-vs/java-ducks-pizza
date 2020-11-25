@@ -53,11 +53,11 @@ public class PizzaToppingAssociationDao implements IPizzaToppingAssociation {
 		CriteriaBuilder cb = session.getCriteriaBuilder();
 		CriteriaQuery<PizzaToppingAssociationVo> cq = cb.createQuery(PizzaToppingAssociationVo.class);
 		Root<PizzaToppingAssociationVo> root = cq.from(PizzaToppingAssociationVo.class);
-		cq.where(cb.equal(root.get("id"), pizzaId));
+		cq.where(cb.equal(root.get("pizzaId"), pizzaId));
 		Query<PizzaToppingAssociationVo> query = session.createQuery(cq);
 
-		List<PizzaToppingAssociationVo> lstPtavs = new ArrayList<PizzaToppingAssociationVo>();
-		query.list();
+		List<PizzaToppingAssociationVo> lstPtavs = query.list(); //new ArrayList<PizzaToppingAssociationVo>();
+		//query.list();
 		txn.commit();
 		
 		return lstPtavs;

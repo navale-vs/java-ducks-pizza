@@ -17,11 +17,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import com.javaduckspizza.service.dao.CustomerServiceDao;
+import com.javaduckspizza.service.dao.LoginServiceDao;
 import com.javaduckspizza.service.dao.ModifierServiceDao;
 import com.javaduckspizza.service.dao.OrderServiceDao;
 import com.javaduckspizza.service.dao.PizzaServiceDao;
 import com.javaduckspizza.service.dao.TypesServiceDao;
 import com.javaduckspizza.vo.CustomerVo;
+import com.javaduckspizza.vo.LoginVo;
 import com.javaduckspizza.vo.ModifierVo;
 import com.javaduckspizza.vo.OrdersVo;
 import com.javaduckspizza.vo.PizzaToppingAssociationVo;
@@ -110,7 +112,7 @@ public class OnlineOrderService {
 	@GET
 	@Path("/customer/email/{email}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public CustomerVo getCustomerByEmail(@PathParam(value = "email") String email) {
+	public CustomerVo getCustomerByEmail(@PathParam(value = "email") String email, HttpServletResponse response) {
 		return customerServiceDao.getByEmail(email);
 	}
 
@@ -149,23 +151,6 @@ public class OnlineOrderService {
 		return orderId;
 	}
 
-
-	/*
-	 * Orders
-	 */
-//	@POST
-//	@Path("/orders")
-//	@Produces(MediaType.APPLICATION_JSON)
-//	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-//	public long addOrder(@FormParam("customerId") long customerId, @FormParam("retrievalMethod") long retrievalMethod,
-//			@FormParam("total") BigDecimal total, @FormParam("status") long status, @FormParam("dateTimePlaced") Timestamp dateTimePlaced,
-//			@FormParam("dateTimeDue") Timestamp dateTimeDue, @FormParam("dateTimeReady") Timestamp dateTimeReady,
-//			@FormParam("dateTimeCompleted") Timestamp dateTimeCompleted) {
-//		OrdersVo orderVo = new OrdersVo();
-//		long orderId = orderServiceDao.addOrder(orderVo);
-//		return orderId;
-//	}
-
 	@GET
 	@Path("/orders/id/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -201,10 +186,8 @@ public class OnlineOrderService {
 	@GET
 	@Path("/pizza/orderid/{orderid}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<PizzaVo> getPizzaByOrderId(@PathParam(value = "orderId") long orderId) {
-//		Session session = SessionUtil.getInstance().openSession();
+	public List<PizzaVo> getPizzaByOrderId(@PathParam(value = "orderId") long orderId, HttpServletResponse response) {
 		List<PizzaVo> lstPizzaVo = pizzaServiceDao.getByOrderId(orderId);
-//		session.close();
 		return lstPizzaVo;
 	}
 
@@ -219,14 +202,23 @@ public class OnlineOrderService {
 		return lstPv;
 	}
 
+	@GET
+	@Path("/pizza/orderidandstatus/{orderid}/{status}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<PizzaToppingAssociationVo> getToppingsByPizza(@PathParam(value = "orderId") long pizzaId) {
+		List<PizzaToppingAssociationVo> lstPtav = pizzaServiceDao.getToppingsByPizza(pizzaId);
+		return lstPtav;
+	}	
+
 	@POST
 	@Path("/pizza/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public long addPizza(@FormParam("crust") long crust, @FormParam("orderId") long orderId, @FormParam("price") BigDecimal price,
+	public long addPizza(@FormParam("cheese") long cheese, @FormParam("crust") long crust, @FormParam("orderId") long orderId, @FormParam("price") BigDecimal price,
 			@FormParam("sauce") long sauce, @FormParam("size") long size, @FormParam("status") long status,
 			List<PizzaToppingAssociationVo> lstToppings, @Context HttpServletResponse response) {
 		PizzaVo pizzaVo = new PizzaVo();
+		pizzaVo.setCheese(cheese);
 		pizzaVo.setCrust(crust);
 		pizzaVo.setOrderId(orderId);
 		pizzaVo.setPrice(price);
@@ -272,9 +264,7 @@ public class OnlineOrderService {
 	@Path("/types/category/{category}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<TypesVo> getTypesByCategory(@PathParam(value = "category") String category) {
-//		Session session = SessionUtil.getInstance().openSession();
 		List<TypesVo> lst = typesServiceDao.getByCategory(category);
-//		session.close();
 
 		return lst;
 	}
@@ -284,11 +274,40 @@ public class OnlineOrderService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<TypesVo> getTypesByCategoryAndStatus(@PathParam(value = "category") String category,
 			@PathParam(value = "category") boolean active) {
-//		Session session = SessionUtil.getInstance().openSession();
 		List<TypesVo> lst = typesServiceDao.getByCategoryAndStatus(category, active);
-//		session.close();
 
 		return lst;
 	}
 
+	@POST
+	@Path("/login/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public long addLogin(@FormParam("email") String email, @FormParam("password") String password,
+			@Context HttpServletResponse response) {
+		CustomerVo cv = getCustomerByEmail(email, response);
+		LoginVo loginVo= new LoginVo();
+		loginVo.setCustomerId(cv.getId());
+		loginVo.setPassword(password);
+
+		LoginServiceDao lsd = new LoginServiceDao();
+		lsd.addLogin(loginVo);
+
+		return cv.getId(); //maybe change this to return something else?
+	}
+
+
+	@GET
+	@Path("/login/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public long getLogin(@FormParam("email") String email, @FormParam("password") String password,
+			@Context HttpServletResponse response) {
+		CustomerVo cv = getCustomerByEmail(email, response);
+		LoginVo loginVo= new LoginVo();
+		loginVo.setCustomerId(cv.getId());
+		loginVo.setPassword(password);
+
+		return cv.getId(); //maybe change this to return something else?
+	}
 }

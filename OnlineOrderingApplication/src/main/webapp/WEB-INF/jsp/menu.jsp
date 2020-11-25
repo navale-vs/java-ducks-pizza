@@ -7,10 +7,11 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Get ready for delicious!</title>
 	</head>
+	<script type="text/javascript" src="/scripts/menu.js"></script>
 	<script type="text/javascript" src="/scripts/scripts.js"></script>
 	<body onload="includeHtml(); setViewCartLabel(${itemCount});">
 		<div w3-include-html="header.html"></div>
-		<div w3-include-html="sidebar.html"></div>
+		<div w3-include-html="/sidebar"></div>
 		<form method="POST" action="/addItem">
 			<input type="hidden" id="toppingsSelected" name="toppingsSelected" value="" />
 			<table class="editableContent">
@@ -212,10 +213,10 @@
 		}
 	}
 
-	function setViewCartLabel(itemCount) {
-		console.log("itemCount: " + itemCount);
-		document.getElementById("viewCart").value = ((itemCount) ? "View Cart (" + itemCount + ")" : "View Cart");
-	} 
+// 	function setViewCartLabel(itemCount) {
+// 		console.log("itemCount: " + itemCount);
+// 		document.getElementById("viewCart").value = ((itemCount) ? "View Cart (" + itemCount + ")" : "View Cart");
+// 	} 
 
 	function validatePizza() {
 		var sizeId = getCheckedElements("size")[0];

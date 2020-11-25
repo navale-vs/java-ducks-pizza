@@ -92,7 +92,7 @@ class OnlineOrderServiceTest {
 	@Test
 	void testGetCustomerByEmail() {
 		String emailAddress = "emailAddress";
-		CustomerVo cv = oos.getCustomerByEmail(emailAddress);
+		CustomerVo cv = oos.getCustomerByEmail(emailAddress, null);
 		verify(customerServiceDao, times(1)).getByEmail(emailAddress);
 	}
 
@@ -170,6 +170,7 @@ class OnlineOrderServiceTest {
 	 */
 	@Test
 	void testAddPizza() {
+		long cheese = 13L;
 		long crust = 34L;
 		long orderId = 4L;
 		BigDecimal price = BigDecimal.valueOf(10.50);
@@ -178,7 +179,7 @@ class OnlineOrderServiceTest {
 		long status = 98L;
 		List<PizzaToppingAssociationVo> lstPtav = new ArrayList<PizzaToppingAssociationVo>();
 
-		long id = oos.addPizza(crust, orderId, price, sauce, size, status, lstPtav, null);
+		long id = oos.addPizza(cheese, crust, orderId, price, sauce, size, status, lstPtav, null);
 		verify(pizzaServiceDao, times(1)).addPizza(any(PizzaVo.class));
 	}
 
@@ -192,7 +193,7 @@ class OnlineOrderServiceTest {
 	@Test
 	void testGetPizzaByOrderId() {
 		long orderId = 334L;
-		List<PizzaVo> lstPizzaVo = oos.getPizzaByOrderId(orderId);
+		List<PizzaVo> lstPizzaVo = oos.getPizzaByOrderId(orderId, null);
 		verify(pizzaServiceDao, times(1)).getByOrderId(orderId);
 	}
 
