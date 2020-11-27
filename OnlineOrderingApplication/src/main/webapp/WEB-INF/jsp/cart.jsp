@@ -19,7 +19,7 @@
 				<tr>
 					<td class="garbage">
 						<img class="removeButton" height="25" width="25" src="/img/closedGarbage.png" onmousedown="src='/img/openGarbage.png'"
-							onmouseup="src='/img/closedGarbage.png'" onclick="changeAction(cartForm, '/removeItem'); handleDelete(); cartForm.submit();"
+							onmouseup="src='/img/closedGarbage.png'" onclick="handleDelete(cartForm); cartForm.submit();"
 							alt="Remove" title="Remove Checked Items"/>
 					</td>
 					<th>Description</th>
@@ -35,12 +35,12 @@
 				<tr>
 					<td class="garbage">
 						<img class="removeButton" height="25" width="25" src="/img/closedGarbage.png" onmousedown="src='/img/openGarbage.png'"
-							onmouseup="src='/img/closedGarbage.png'" onclick="changeAction(cartForm, '/removeItem'); handleDelete(); cartForm.submit();"
+							onmouseup="src='/img/closedGarbage.png'" onclick="handleDelete(cartForm); cartForm.submit();"
 							alt="Remove" title="Remove Item"/>
 					</td>
 					<td>
 						<input type="button" class="cartButton" onclick="location.href = '/menu'" value="Back to Menu" />
-						<input type="Submit" class="cartButton" onclick="changeAction(cartForm, '/loginCustomer'); removeItems(); cartForm.submit();" value="Continue" id="continue" />
+						<input type="Submit" class="cartButton" onclick="loginCustomer(cartForm); removeItems(); cartForm.submit();" value="Continue" id="continue" />
 						<input type="button" class="cartButton" onclick="location.href = '/cancel'" value="Cancel" />
 					</td>
 					<td class="price">${total}</td>

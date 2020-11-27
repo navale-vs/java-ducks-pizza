@@ -2,11 +2,12 @@
  * For cart 
  */
  
-function handleDelete() {
+function handleDelete(form) {
 	console.log("in handleDelete");
 	removeItems();
 	console.log("document.getElementById(\"itemsToDelete\").value: " + document.getElementById("itemsToDelete").value);
 	location.href = '/removeItem';
+	form.action = '/removeItem';
 }
 
 function removeItems() {
@@ -33,7 +34,6 @@ function enableContinue(total) {
 	document.getElementById("continue").disabled = (total <= 0);
 }
 
-function changeAction(form, newAction) {
-	console.log(changeAction);
-	form.action = newAction;
+function loginCustomer(form) {
+	form.action = '/loginCustomer';
 }

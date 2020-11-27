@@ -11,6 +11,7 @@
 	<body onload="includeHtml(); showNewCustomerForm();">
 		<div w3-include-html="header.html"></div>
 		<div w3-include-html="/sidebar"></div>
+		<div w3-include-html="/cart" style="right: 0;"></div>
 		<table class="editableContent">
 			<tr>
 				<td>
@@ -94,7 +95,6 @@
 				</tr>
 			</table>
 		</form>
-		<div w3-include-html="/cart" style="right: 0;"></div>
 		<div w3-include-html="footer.html"></div>
 	</body>
 
