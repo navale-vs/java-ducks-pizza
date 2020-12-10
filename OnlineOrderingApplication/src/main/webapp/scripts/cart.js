@@ -3,29 +3,23 @@
  */
  
 function handleDelete(form) {
-	console.log("in handleDelete");
 	removeItems();
-	console.log("document.getElementById(\"itemsToDelete\").value: " + document.getElementById("itemsToDelete").value);
 	location.href = '/removeItem';
 	form.action = '/removeItem';
 }
 
 function removeItems() {
-	console.log("in removeItems");
 //	var itemsToRemove = getCheckedElements();
 	var elemArray = document.getElementsByName("checkToRemove");
 	var checkedArray = [];
 
 	for(i = 0; i < elemArray.length; i++) {
 		if(elemArray[i].checked == true) {
-			var pizza = {id: elemArray[i].id};
-			console.log(JSON.stringify(pizza));
-			checkedArray.push(JSON.stringify(pizza));
+			checkedArray.push(elemArray[i].id);
 		}
 	}
 
-	console.log("checkedArray: " + checkedArray);
-	document.getElementById("itemsToDelete").value = "[" + checkedArray + "]";
+	document.getElementById("itemsToDelete").value = checkedArray;
 }
 
 function enableContinue(total) {

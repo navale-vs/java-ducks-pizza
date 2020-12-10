@@ -2,6 +2,7 @@ package com.javaduckspizza.OnlineOrderingApplication.main;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -179,25 +182,12 @@ public class AppController {
 
 	private void removePizzasFromOrder(String itemsToDelete) {
 		if((itemsToDelete.length() > 0) && !itemsToDelete.matches("\\s")) {
-			List<PizzaVo> lstPizzasToDelete = null;
-
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				lstPizzasToDelete = mapper.readValue(itemsToDelete, mapper.getTypeFactory().
-						constructCollectionType(List.class, PizzaVo.class));
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-
-			for (PizzaVo pvFromJson : lstPizzasToDelete) {
-				for (Iterator<PizzaVo> iter = mapShoppingCart.keySet().iterator(); iter.hasNext();) {
-					PizzaVo pizzaVo = iter.next();
-
-					if(Long.valueOf(pvFromJson.getId()).equals(pizzaVo.getId())) {
-						iter.remove();
-					}
-				}
-			}
+			List<Long> lstPizzasToDelete = Arrays.stream(itemsToDelete.split(",")).
+					mapToLong(n -> Long.valueOf(n)).boxed().collect(Collectors.toList());
+			
+			mapShoppingCart = mapShoppingCart.entrySet().stream().
+					filter(entry -> !lstPizzasToDelete.contains(entry.getKey().getId())).
+				collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
 		}
 	}
 
@@ -433,7 +423,8 @@ public class AppController {
 
 	public BigDecimal calculateTotal(Set<PizzaVo> pizzas) {
 		BigDecimal bdTotal = BigDecimal.ZERO;
-          
+
+		//I want to believe that this can be replaced with stream.reduce(), but haven't figured it out yet
 		for (PizzaVo pizzaVo : pizzas) {
 			bdTotal = bdTotal.add(pizzaVo.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
 		}
