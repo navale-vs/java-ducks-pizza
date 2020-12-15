@@ -6,12 +6,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -62,7 +60,7 @@ public class AppController {
 		addAttributesForMenu(model);
 		model.addAttribute("itemCount", mapShoppingCart.size());
 
-		return "/menu.";  //I probably messed up something in the configuration.  If written without / and ., it tries to get WEB-INF/jspmenujsp
+		return "/menu.";  //I probably messed up something in the configuration.  If written without / and ., it tries t	o get WEB-INF/jspmenujsp
 	}
 
 	@GET
@@ -90,12 +88,7 @@ public class AppController {
 			List<PizzaVo> lstPizzasForOrder = onlineOrderService.getPizzaByOrderId(orderId, response);
 			System.err.println(lstPizzasForOrder.size() + " pizzas for order " + orderId);
 
-			for (PizzaVo pizzaVo : lstPizzasForOrder) {
-				System.err.println("Toppings for pizzaId: " + pizzaVo.getId());
-				List<PizzaToppingAssociationVo> lstPtav = onlineOrderService.getToppingsByPizza(pizzaVo.getId());
-				System.err.println("Toppings count for pizzaId: " + lstPtav.size());
-				mapOrderHistory.put(pizzaVo, lstPtav);
-			}
+			lstPizzasForOrder.stream().forEach(n -> mapOrderHistory.put(n, onlineOrderService.getToppingsByPizza(n.getId())));
 		}
 
 		Map<PizzaVo, String> cartForDisplay = prepareCartForDisplay(mapOrderHistory);
@@ -405,7 +398,7 @@ public class AppController {
 				onlineOrderService.getCurrentModifierByType(pizzaVo.getSize());
 
 		BigDecimal bdPrice = mvBasePrice.getValue().multiply(mvSize.getValue());
-		BigDecimal bdToppingsTotal = BigDecimal.ZERO; //mvTopping.getValue().multiply(BigDecimal.valueOf(mapShoppingCart.get(pizzaVo).size()));
+		BigDecimal bdToppingsTotal = BigDecimal.ZERO;
 		List<PizzaToppingAssociationVo> lstToppings = mapShoppingCart.get(pizzaVo);
 
 		if(lstToppings != null) {
@@ -423,11 +416,8 @@ public class AppController {
 
 	public BigDecimal calculateTotal(Set<PizzaVo> pizzas) {
 		BigDecimal bdTotal = BigDecimal.ZERO;
-
-		//I want to believe that this can be replaced with stream.reduce(), but haven't figured it out yet
-		for (PizzaVo pizzaVo : pizzas) {
-			bdTotal = bdTotal.add(pizzaVo.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
-		}
+		bdTotal = pizzas.stream().map(n -> n.getPrice()).
+				reduce((n, m) -> n = n.add(m).setScale(2, BigDecimal.ROUND_HALF_UP)).get();
 
 		return bdTotal;
 	}

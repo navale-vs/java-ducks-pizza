@@ -11,7 +11,7 @@
 	<body onload="includeHtml(); showNewCustomerForm();">
 		<div w3-include-html="header.html"></div>
 		<div w3-include-html="/sidebar"></div>
-		<div w3-include-html="/cart" style="right: 0;"></div>
+		<div w3-include-html="/cart"></div>
 		<table class="editableContent">
 			<tr>
 				<td>
@@ -67,11 +67,11 @@
 				</tr>
 				<tr>
 					<td><label for="password_newCustomer" class="customerLabel requiredFieldLabel">Password:</label></td>
-					<td><input type="text" id="password_newCustomer" name="password_newCustomer" /></td>
+					<td><input type="password" id="password_newCustomer" name="password_newCustomer" /></td>
 				</tr>
 				<tr>
 					<td><label for="confirmPassword_newCustomer" class="customerLabel requiredFieldLabel">Confirm Password:</label></td>
-					<td><input type="text" id="confirmPassword_newCustomer" name="confirmPassword_newCustomer" /></td>
+					<td><input type="password" id="confirmPassword_newCustomer" name="confirmPassword_newCustomer" /></td>
 				</tr>
 				<tr>
 					<td><input type="submit" class="cartButton" id="submit_newCustomer" onclick="return verifyRequiredFields();" /></td>
