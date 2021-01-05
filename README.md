@@ -5,6 +5,6 @@ Database: This contains a number of classes that use Hibernate to interact with 
 
 OnlineOrderingApplication: Contains an MVC application generated using Spring Boot that is the web interface used by customers for entering orders.
 
-PizzaRestService: REST service that allows PizzaBoot to interact with the database.
+PizzaRestService: REST service that allows OnlineOrderingApplication to interact with the database.
 
 OrderingSystem and PizzaMVC are no longer in use and shall be deleted.
