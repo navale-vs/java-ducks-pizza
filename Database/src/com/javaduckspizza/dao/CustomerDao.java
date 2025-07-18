@@ -2,9 +2,9 @@ package com.javaduckspizza.dao;
 
 import java.util.List;
 
-import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import com.javaduckspizza.dao.interfaces.ICustomerDao;
 import com.javaduckspizza.vo.CustomerVo;
@@ -31,7 +31,7 @@ public class CustomerDao implements ICustomerDao {
 	@Override
 	public int delete(long id, Session session) {
 		Transaction txn = session.beginTransaction();
-		Query<CustomerDao> query = session.createQuery(HQL_DELETE);
+		Query<CustomerVo> query = session.createQuery(HQL_DELETE, CustomerVo.class);
 		query.setParameter("id", id);
 		int rows = query.executeUpdate();
 		txn.commit();
@@ -42,7 +42,7 @@ public class CustomerDao implements ICustomerDao {
 	@Override
 	public int update(CustomerVo cv, Session session) {
 		Transaction txn = session.beginTransaction();
-		Query<CustomerDao> query = session.createQuery(HQL_UPDATE);
+		Query<CustomerVo> query = session.createQuery(HQL_UPDATE, CustomerVo.class);
 		query.setParameter("firstName", cv.getFirstName());
 		query.setParameter("middleName", cv.getMiddleName());
 		query.setParameter("lastName", cv.getLastName());
@@ -64,7 +64,7 @@ public class CustomerDao implements ICustomerDao {
 	@Override
 	public CustomerVo getById(long id, Session session) {
 		Transaction txn = session.beginTransaction();
-		Query<CustomerVo> query = session.createQuery(HQL_GET_BY_ID);
+		Query<CustomerVo> query = session.createQuery(HQL_GET_BY_ID, CustomerVo.class);
 		query.setParameter("id", id);
 		List<CustomerVo> lst = query.list();
 		txn.commit();
@@ -75,7 +75,7 @@ public class CustomerDao implements ICustomerDao {
 	@Override
 	public CustomerVo getByEmail(String email, Session session) {
 		Transaction txn = session.beginTransaction();
-		Query<CustomerVo> query = session.createQuery(HQL_GET_BY_EMAIL);
+		Query<CustomerVo> query = session.createQuery(HQL_GET_BY_EMAIL, CustomerVo.class);
 		query.setParameter("email", email);
 		List<CustomerVo> lstCv = query.list();
 		txn.commit();
