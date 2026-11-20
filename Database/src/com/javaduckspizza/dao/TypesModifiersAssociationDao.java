@@ -2,17 +2,17 @@ package com.javaduckspizza.dao;
 
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.javaduckspizza.dao.interfaces.ITypesModifiersAssociationDao;
 import com.javaduckspizza.vo.TypesModifierAssociationVo;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 public class TypesModifiersAssociationDao implements ITypesModifiersAssociationDao {
 	@Override

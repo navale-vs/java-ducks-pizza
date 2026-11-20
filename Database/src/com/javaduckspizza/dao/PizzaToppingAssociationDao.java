@@ -1,13 +1,6 @@
 package com.javaduckspizza.dao;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -15,6 +8,12 @@ import org.hibernate.query.Query;
 
 import com.javaduckspizza.dao.interfaces.IPizzaToppingAssociation;
 import com.javaduckspizza.vo.PizzaToppingAssociationVo;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.criteria.Root;
 
 public class PizzaToppingAssociationDao implements IPizzaToppingAssociation {
 	@Override

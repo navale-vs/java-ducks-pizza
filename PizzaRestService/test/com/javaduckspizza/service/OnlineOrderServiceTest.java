@@ -2,6 +2,7 @@ package com.javaduckspizza.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -188,6 +189,7 @@ class OnlineOrderServiceTest {
 		long id = 334L;
 		PizzaVo pizzaVo = oos.getPizzaById(id);
 		verify(pizzaServiceDao, times(1)).getById(id);
+		assertNotNull(pizzaVo);
 	}
 
 	@Test
